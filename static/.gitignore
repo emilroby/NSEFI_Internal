@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.so
+*.egg-info/
+*.egg
+
+# Virtual environment
+venv/
+.env/
+
+# Jupyter & Streamlit
+.ipynb_checkpoints/
+.streamlit/
+
+# Data files (optional, keep if you don’t want them in git)
+*.xlsx
+*.csv
+*.xls
+
+# ---- PyCharm ----
+.idea/
+*.iml
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
