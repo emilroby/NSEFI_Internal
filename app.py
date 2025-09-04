@@ -1,5 +1,5 @@
-# version: 1.3.4 — Tight vertical spacing: all content raised closer to the title
-# app.py — NSEFI policy & regulatory monitoring dashboard (no map)
+# version: 1.3.26 — Latest updates banner shown only on Home page
+# app.py — NSEFI policy & regulatory monitoring dashboard
 
 from __future__ import annotations
 import base64
@@ -91,6 +91,7 @@ BRAND_DEEP   = "#0F4237"
 BRAND_HOVER  = "#0d3d30"
 TEXT_DARK    = "#0F4237"
 NSEFI_URI    = image_to_data_uri(find_asset("12th_year_anniversary_logo_transparent"))
+RIGHT_LOGO_URI = NSEFI_URI or "https://nsefi.in/wp-content/uploads/2023/02/NSEFI-Logo-1.png"
 
 def qp(key: str, default: str = "") -> str:
     try: params = dict(st.query_params)
@@ -99,8 +100,11 @@ def qp(key: str, default: str = "") -> str:
     if isinstance(val, list): return val[0] if val else default
     return val if isinstance(val, str) else default
 
+def now_ist() -> datetime:
+    return datetime.now(ZoneInfo("Asia/Kolkata")) if ZoneInfo else datetime.now()
+
 # ─────────────────────────────────────────────────────────────────────────────
-# Dummy updates generators
+# Updates generators
 # ─────────────────────────────────────────────────────────────────────────────
 def month_dates(year: int, month: int) -> List[str]:
     last = calendar.monthrange(year, month)[1]
@@ -114,27 +118,24 @@ def build_updates_for_group(names: List[str], label: str, year: int, month: int)
         out[name] = [{"type": label, "title": f"{name}: example update {i+1}", "date": ds[i % len(ds)]} for i in range(len(ds))]
     return out
 
-def aug_dates() -> List[str]:
-    return ["2025-08-02","2025-08-05","2025-08-08","2025-08-11","2025-08-14",
-            "2025-08-17","2025-08-20","2025-08-23","2025-08-26","2025-08-29"]
-
-def make_aug_updates(name: str, tag: str) -> List[Dict]:
-    ds = aug_dates()
-    return [{"type": tag, "title": f"{name}: example update {i+1}", "date": ds[i]} for i in range(len(ds))]
-
-STATE_UPDATES: Dict[str, List[Dict]]   = {s: make_aug_updates(s, "Regulatory") for s in STATES}
-UT_UPDATES: Dict[str, List[Dict]]      = {u: make_aug_updates(u, "Regulatory") for u in UTS}
-CENTRAL_UPDATES: Dict[str, List[Dict]] = {c: make_aug_updates(c, "Update")      for c in CENTRAL_ALL}
-
 @st.cache_data
 def get_previous_updates_maps(year: int, month: int) -> Tuple[Dict[str, List[Dict]], Dict[str, List[Dict]], Dict[str, List[Dict]]]:
-    centrals = build_updates_for_group(CENTRAL_ALL, "Update", year, month)
-    states   = build_updates_for_group(STATES, "Regulatory", year, month)
-    uts      = build_updates_for_group(UTS, "Regulatory", year, month)
-    return centrals, states, uts
+    return (
+        build_updates_for_group(CENTRAL_ALL, "Update", year, month),
+        build_updates_for_group(STATES, "Regulatory", year, month),
+        build_updates_for_group(UTS, "Regulatory", year, month),
+    )
+
+@st.cache_data
+def get_latest_updates_maps(year: int, month: int) -> Tuple[Dict[str, List[Dict]], Dict[str, List[Dict]], Dict[str, List[Dict]]]:
+    return (
+        build_updates_for_group(CENTRAL_ALL, "Update", year, month),
+        build_updates_for_group(STATES, "Regulatory", year, month),
+        build_updates_for_group(UTS, "Regulatory", year, month),
+    )
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CSS — tightened spacing everywhere
+# CSS — compact spacing + 2-step flyout menus
 # ─────────────────────────────────────────────────────────────────────────────
 def css() -> str:
     return f"""
@@ -144,10 +145,13 @@ def css() -> str:
   --brandDeep: {BRAND_DEEP};
   --brandHover: {BRAND_HOVER};
   --textDark: {TEXT_DARK};
-  --navGap: 4px;            /* equal, minimal gap above & below navbar */
-  --belowTitle: 4px;        /* tiny gap under title */
-  --belowNavToLatest: 6px;  /* tiny gap under navbar before Latest heading */
+
+  --topbarPushDown: 1.6em;
+  --gapTopbarToTitle: 1.6em;
+  --gapTitleToNavbar: 3.2em;   /* title ↔ navbar */
+  --belowNavToLatest: 1.0em;   /* ≈1 line navbar ↔ first section */
 }}
+
 html, body, .stApp {{
   background:
     radial-gradient(1200px 700px at 12% -10%, #F3FAF6 0%, transparent 60%),
@@ -156,72 +160,111 @@ html, body, .stApp {{
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }}
 #MainMenu, footer, header {{ visibility: hidden; height: 0; }}
-/* Pull entire page higher */
-.block-container {{ padding-top: .02rem; overflow: visible; }}
 
-/* Top bar — timestamp (left) and NSEFI logo (right) on the SAME LINE */
+/* Remove Streamlit's default top padding */
+.block-container {{ padding-top: 0 !important; margin-top: 0 !important; overflow: visible; }}
+.block-container > div:first-child {{ margin-top: 0 !important; padding-top: 0 !important; }}
+
+/* Topbar (timestamp) */
 .topbar {{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:10px; padding:0 2px; font-weight:700; color:#0F4237; font-size:14px;
-  margin-bottom: 2px;   /* very small */
-}}
-.topbar .logo img {{
-  height: 58px; width:auto; background: transparent !important;
-  border-radius: 0 !important; padding: 0 !important; box-shadow: none !important;
+  display:flex; align-items:center; gap:8px; white-space: nowrap;
+  font-weight:700; color:#0F4237; font-size:14px;
+  margin-top: var(--topbarPushDown);
+  margin-bottom: var(--gapTopbarToTitle);
 }}
 
-/* Title — single line, minimal gap below */
-.titlewrap {{ margin: 0; padding: 0; }}
+/* Title (inline with logo) */
+.titlebar {{ display:flex; align-items:center; justify-content:center; gap:12px; margin:0; padding:0; }}
 .pagetitle {{
-  text-align:center; font-weight:900; color:var(--textDark);
-  margin: 0 0 var(--belowTitle) 0; padding: 0;
+  font-weight:900; color:var(--textDark);
+  margin: 0 !important; padding: 0 !important;
   font-size: clamp(28px, 3.2vw, 40px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }}
+.pagetitle-logo img {{ height: 64px; width:auto; }}
 
-/* Navbar — sits very close to the title and latest heading */
+/* Navbar */
 .navbar {{
-  margin: var(--navGap) 0 var(--navGap) 0;
+  margin: var(--gapTitleToNavbar) 0 0 0 !important;
   background: var(--brand); border-radius: 12px; padding: 0;
   box-shadow: 0 1px 6px rgba(0,0,0,.12);
 }}
 .navbar > ul {{ list-style:none; margin:0; padding:0; display:flex; }}
 .navbar > ul > li {{ position:relative; }}
 .navbar a, .navbar span {{
-  display:block; padding:9px 16px; color:#fff; text-decoration:none;
+  display:block; padding:10px 16px; color:#fff; text-decoration:none;
   font-weight:700; font-size:15px; white-space:nowrap;
 }}
 .navbar > ul > li:hover {{ background: var(--brandHover); border-radius:12px; }}
 
-/* Dropdown (Policies & Regulations only) */
+/* ── 2-step flyout (Policies/Regulations) ───────────────────────────── */
+
+/* first dropdown box under Policies/Regulations */
 .navbar ul li .dropdown {{
+  position:absolute; top:100%; left:0;
+  background:var(--brandHover);
+  border-radius:10px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.25);
+  z-index:100001;
+  padding:8px;
   visibility:hidden; opacity:0; transition:opacity .12s ease-in-out;
-  position:absolute; background:var(--brandHover); width:360px; top:100%; left:0;
-  border-radius:0 0 10px 10px; box-shadow:0 6px 16px rgba(0,0,0,0.25);
-  z-index:100001; padding:8px 10px;
+  min-width: 220px;
 }}
 .navbar ul li:hover > .dropdown {{ visibility:visible; opacity:1; }}
-.navbar .dropdown ul {{ list-style:none; margin:0; padding:0; max-height:230px; overflow:auto; }}
-.menu-title {{ color:#e6fff5; font-size:12px; font-weight:800; margin:6px; }}
-.menu-list li a {{ display:block; padding:7px 10px; border-radius:8px; color:#fff; font-size:14px; }}
-.menu-list li a:hover {{ background:rgba(255,255,255,.12); }}
 
-/* Headings & spacing */
-.section-title {{ font-size:18px; font-weight:900; color:var(--textDark); margin: 0 0 6px 0; }}
-.section-title.first {{ margin-top: var(--belowNavToLatest); }}  /* tiny gap below navbar */
-.small-heading {{ font-size:16px; font-weight:900; color:var(--textDark); margin: 6px 0 6px; }}
+/* three root options (Central, States, UTs) */
+.navbar .dropdown .root {{ list-style:none; margin:0; padding:0; }}
+.navbar .dropdown .root > li {{ position:relative; }}
+.navbar .dropdown .root > li > span {{
+  display:flex; align-items:center; justify-content:space-between;
+  color:#fff; font-weight:800; font-size:14px;
+  padding:8px 12px; border-radius:8px; cursor:default;
+}}
+.navbar .dropdown .root > li > span::after {{
+  content: '›'; opacity:.8; margin-left:12px; font-size:16px; line-height:1;
+}}
+.navbar .dropdown .root > li:hover > span {{ background:rgba(255,255,255,.12); }}
+
+/* flyout list that opens to the right */
+.navbar .dropdown .flyout {{
+  position:absolute; top:0; left:100%;
+  background:var(--brandHover);
+  border-radius:10px;
+  min-width:280px; max-height: 320px; overflow:auto;
+  padding:8px; box-shadow:0 6px 16px rgba(0,0,0,0.25);
+  z-index:100002;
+  visibility:hidden; opacity:0; transition:opacity .12s ease-in-out;
+}}
+.navbar .dropdown .root > li:hover > .flyout {{ visibility:visible; opacity:1; }}
+.navbar .dropdown .flyout ul {{ list-style:none; margin:0; padding:0; }}
+.navbar .dropdown .flyout li a {{
+  display:block; padding:7px 10px; border-radius:8px; color:#fff; font-size:14px;
+}}
+.navbar .dropdown .flyout li a:hover {{ background:rgba(255,255,255,.12); }}
+
+/* Kill any residual gap before the very first section after navbar */
+.navbar ~ [data-testid="stVerticalBlock"]:first-of-type,
+.navbar ~ div:first-of-type,
+.navbar ~ [data-testid="stVerticalBlock"]:first-of-type [data-testid="stMarkdownContainer"] {{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}}
+
+/* Headings */
+.section-title {{
+  font-size:18px; font-weight:900; color:var(--textDark);
+  margin: var(--belowNavToLatest) 0 8px 0;
+}}
+.small-heading {{ font-size:16px; font-weight:900; color:var(--textDark); margin: 4px 0 6px; }}
 
 /* Selects */
 [data-baseweb="select"] label, .stSelectbox label {{ display:none !important; }}
 .stSelectbox > div > div {{ border-radius:12px!important; }}
 
-/* Updates ticker cards */
-.updates {{
-  position:relative; background:var(--brandDeep); color:#ffffff;
-  border-radius:10px; padding:0; overflow:hidden;
-  box-shadow:0 10px 22px rgba(16,40,32,0.06);
-}}
-.ticker  {{ position:relative; height:240px; overflow:hidden; }}
+/* Tickers */
+.updates {{ position:relative; background:var(--brandDeep); color:#ffffff;
+  border-radius:10px; padding:0; overflow:hidden; box-shadow:0 10px 22px rgba(16,40,32,0.06); }}
+.ticker  {{ position:relative; height:230px; overflow:hidden; }}
 .track   {{ position:absolute; left:0; right:0; top:0; animation: moveUp 20s linear infinite; }}
 .updates:hover .track {{ animation-play-state: paused; }}
 .item {{ padding:12px 14px; font-size:14px; line-height:1.4; border-bottom:1px solid rgba(255,255,255,.08); }}
@@ -233,10 +276,11 @@ html, body, .stApp {{
 """
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Navbar (Representations direct; Policies/Regulations dropdowns)
+# Navbar with 2-step flyout
 # ─────────────────────────────────────────────────────────────────────────────
 def dropdown_html(page: str) -> str:
     centrals = CENTRAL_FOR_POLICIES if page == "policies" else CENTRAL_ALL
+
     central_links = "".join(
         f'<li><a target="_self" href="?page={page}&level=central&entity={c.replace(" ", "%20")}">{c}</a></li>'
         for c in centrals
@@ -249,12 +293,24 @@ def dropdown_html(page: str) -> str:
         f'<li><a target="_self" href="?page={page}&level=state&entity={u.replace(" ", "%20")}">{u}</a></li>'
         for u in UTS
     )
+
     return f"""
-<ul class="dropdown">
-  <div class="menu-section"><div class="menu-title">Central</div><ul class="menu-list">{central_links}</ul></div>
-  <div class="menu-section"><div class="menu-title">States</div><ul class="menu-list">{states_links}</ul></div>
-  <div class="menu-section"><div class="menu-title">Union Territories</div><ul class="menu-list">{uts_links}</ul></div>
-</ul>
+<div class="dropdown">
+  <ul class="root">
+    <li class="has-fly">
+      <span>Central</span>
+      <div class="flyout"><ul>{central_links}</ul></div>
+    </li>
+    <li class="has-fly">
+      <span>States</span>
+      <div class="flyout"><ul>{states_links}</ul></div>
+    </li>
+    <li class="has-fly">
+      <span>Union Territories</span>
+      <div class="flyout"><ul>{uts_links}</ul></div>
+    </li>
+  </ul>
+</div>
 """
 
 def navbar_html() -> str:
@@ -270,31 +326,30 @@ def navbar_html() -> str:
 """
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Header (timestamp + logo on same line; title centered; navbar below)
+# Header (timestamp + title + logo + navbar) and live clock
 # ─────────────────────────────────────────────────────────────────────────────
-def header_bar():
-    now = datetime.now(ZoneInfo("Asia/Kolkata")) if ZoneInfo else datetime.now()
+def render_header_block():
+    now = now_ist()
     date_str = f"{now.strftime('%d')} - {now.strftime('%B').lower()} - {now.strftime('%Y')}"
     time_str = f"{now.strftime('%H:%M:%S')} IST"
-    logo_html = f"<div class='logo'><img src='{NSEFI_URI}' alt='NSEFI'/></div>" if NSEFI_URI else ""
 
-    # Top bar with date/time (left) + logo (right)
     st.markdown(
         f"""
         <div class="topbar">
-          <div class="dt"><span id="live-date">{date_str}</span>
+            <span id="live-date">{date_str}</span>
             <span style="opacity:.5">|</span>
-            <span id="live-time">{time_str}</span></div>
-          {logo_html}
+            <span id="live-time">{time_str}</span>
         </div>
+        <div class="titlebar">
+            <h1 class="pagetitle">{TITLE}</h1>
+            <div class="pagetitle-logo"><img src="{RIGHT_LOGO_URI}" alt="NSEFI logo"/></div>
+        </div>
+        {navbar_html()}
         """,
         unsafe_allow_html=True,
     )
 
-    # Title (single line)
-    st.markdown(f"<div class='titlewrap'><h1 class='pagetitle'>{TITLE}</h1></div>", unsafe_allow_html=True)
-
-    # Live clock script
+    # live clock
     st.components.v1.html(
         """
         <script>
@@ -318,11 +373,8 @@ def header_bar():
         height=0,
     )
 
-    # Navbar (gaps handled in CSS)
-    st.markdown(navbar_html(), unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────────────────────────────────────
-# Updates (floating tickers)
+# Updates UI
 # ─────────────────────────────────────────────────────────────────────────────
 def ticker_html(items: List[Dict]) -> str:
     rows = "".join(
@@ -421,7 +473,6 @@ def load_representations_df() -> pd.DataFrame:
 
 def page_representations():
     st.subheader("Representations")
-
     df = load_representations_df()
     if df.empty:
         st.info("No data available. Place an Excel at data/representations.xlsx.")
@@ -467,7 +518,7 @@ def page_representations():
     )
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Policies & Regulations — structured tables + optional Excel loaders
+# Policies & Regulations — optional Excel loaders + SPECIAL CASES
 # ─────────────────────────────────────────────────────────────────────────────
 POLICY_XLS = DATA_DIR / "policies.xlsx"
 REG_XLS    = DATA_DIR / "regulations.xlsx"
@@ -536,12 +587,15 @@ def _load_regulations_excel() -> Optional[pd.DataFrame]:
 
 def page_policies(level: str, entity: str):
     st.subheader("Policies")
+
+    # SPECIAL CASE: Central policies → no update currently
+    if level == "central":
+        st.info("No update currently on Solar and Wind policy at the central level. We’ll update this section when new information is available.")
+        return
+
     pol_df = _load_policies_excel()
 
-    if level == "central":
-        if entity not in CENTRAL_FOR_POLICIES:
-            st.info("Use the ribbon → Policies → Central to choose MNRE / MoP / MoF."); return
-    elif level == "state":
+    if level == "state":
         if entity not in STATES_UTS:
             st.info("Use the ribbon → Policies → State/UT to choose a region."); return
     else:
@@ -555,28 +609,16 @@ def page_policies(level: str, entity: str):
             row = cand.iloc[0]
 
     if row is None:
-        if level == "central":
-            row = pd.Series({
-                "Policy Name": f"{entity} Renewable Energy Policy",
-                "Year": 2025,
-                "Previous Policy Name": f"{entity} RE Policy 2019",
-                "Land Incentives": "Land pooling, concessional leases",
-                "Other State Incentives": "Waiver of certain duties",
-                "Targets": "10 GW by 2030",
-                "Support Infrastructure": "Green corridors, transmission upgrades",
-                "Support Funds": "Viability gap funding scheme",
-            })
-        else:
-            row = pd.Series({
-                "Policy Name": f"{entity} Renewable Energy Policy",
-                "Year": 2025,
-                "Previous Policy Name": f"{entity} RE Policy 2020",
-                "Land Incentives": "Land at concessional rates",
-                "Other State Incentives": "Stamp duty exemption, tax rebates",
-                "Targets": "5 GW by 2030",
-                "Support Infrastructure": "Solar parks, EV charging infra",
-                "Support Funds": "State green energy corpus",
-            })
+        row = pd.Series({
+            "Policy Name": f"{entity} Renewable Energy Policy",
+            "Year": 2025,
+            "Previous Policy Name": f"{entity} RE Policy 2020",
+            "Land Incentives": "Land at concessional rates",
+            "Other State Incentives": "Stamp duty exemption, tax rebates",
+            "Targets": "5 GW by 2030",
+            "Support Infrastructure": "Solar parks, EV charging infra",
+            "Support Funds": "State green energy corpus",
+        })
 
     top = pd.DataFrame([{
         "Policy Name": row.get("Policy Name", ""),
@@ -596,6 +638,12 @@ def page_policies(level: str, entity: str):
 
 def page_regulations(level: str, entity: str):
     st.subheader("Regulations")
+
+    # SPECIAL CASE: Central regulations → no update except MoP
+    if level == "central" and entity and entity != "MoP":
+        st.info(f"No regulatory update currently for {entity}. We’ll update this section when new information is available.")
+        return
+
     reg_df = _load_regulations_excel()
 
     if level == "central":
@@ -666,23 +714,24 @@ def previous_updates_area():
             st.markdown("<div class='small-heading'>UTs</div>", unsafe_allow_html=True)
             compact_updates_box("Choose UT", UTS, ut_map, key=f"prev_uts_{year_val}_{month_num}")
 
-def page_home():
-    # Latest updates (sits immediately under navbar with minimal gap)
-    st.markdown("<div class='section-title first'>Latest updates — August 2025</div>", unsafe_allow_html=True)
+def page_home(year: int, month_num: int):
+    month = calendar.month_name[month_num]
+    central_map, state_map, ut_map = get_latest_updates_maps(year, month_num)
 
-    # Latest updates three columns
+    # Home-only banner:
+    st.markdown(f"<div class='section-title'>Latest updates — {month} {year}</div>", unsafe_allow_html=True)
+
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown("<div class='small-heading'>Central</div>", unsafe_allow_html=True)
-        compact_updates_box("Choose central body", CENTRAL_ALL, CENTRAL_UPDATES, key="central_sel")
+        compact_updates_box("Choose central body", CENTRAL_ALL, central_map, key=f"central_sel_{year}_{month_num}")
     with c2:
         st.markdown("<div class='small-heading'>States</div>", unsafe_allow_html=True)
-        compact_updates_box("Choose state", STATES, STATE_UPDATES, key="state_sel")
+        compact_updates_box("Choose state", STATES, state_map, key=f"state_sel_{year}_{month_num}")
     with c3:
         st.markdown("<div class='small-heading'>UTs</div>", unsafe_allow_html=True)
-        compact_updates_box("Choose UT", UTS, UT_UPDATES, key="ut_sel")
+        compact_updates_box("Choose UT", UTS, ut_map, key=f"ut_sel_{year}_{month_num}")
 
-    # Previous updates below
     previous_updates_area()
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -690,14 +739,21 @@ def page_home():
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
     st.markdown(css(), unsafe_allow_html=True)
-    header_bar()
 
+    # Current IST month/year
+    now = now_ist()
+    year, month_num = now.year, now.month
+
+    # Header block only (no Latest heading here anymore)
+    render_header_block()
+
+    # Route pages
     page  = qp("page", "home").lower()
     level = qp("level", "").lower()
     entity = qp("entity", "")
 
     if page == "home":
-        page_home()
+        page_home(year=year, month_num=month_num)
     elif page == "representations":
         page_representations()
     elif page == "policies":
