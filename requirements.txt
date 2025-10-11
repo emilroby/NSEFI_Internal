@@ -1,4 +1,8 @@
-streamlit
-pandas
-xlsxwriter
-openpyxl
+streamlit>=1.38
+pandas>=2.0
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=5.2
+pdfminer.six>=20231228
+Pillow>=10.1
+python-dateutil>=2.9

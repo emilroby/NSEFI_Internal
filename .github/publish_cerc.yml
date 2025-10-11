@@ -1,0 +1,48 @@
+name: Publish CERC snapshots
+
+on:
+  schedule:
+    - cron: "0 0-21/3 * * *"   # every 3 hours from 00:00 UTC; IST ≈ +5:30
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compute IST Year/Month
+        id: when
+        run: |
+          python - << 'PY'
+          from datetime import datetime, timedelta, timezone
+          ist = timezone(timedelta(hours=5, minutes=30))
+          now = datetime.now(ist)
+          print(f"year={now.year}")
+          print(f"month={now.month}")
+          PY
+
+      - name: Publish month snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python publish_month.py ${{ steps.when.outputs.year }} ${{ steps.when.outputs.month }}
+
+      - name: Commit JSON snapshot
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add nsefi/*.json || true
+          git commit -m "auto: publish CERC snapshot" || echo "nothing to commit"
+          git push

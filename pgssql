@@ -1,0 +1,11 @@
+NSEFI_Internal/
+├─ app.py
+├─ requirements.txt
+├─ data/
+│  └─ cache/                (created automatically at runtime)
+└─ backend/
+   ├─ __init__.py
+   ├─ storage.py
+   └─ adapters/
+      ├─ __init__.py
+      └─ cerc.py

@@ -1,0 +1,591 @@
+{
+  "central_map": {
+    "MoP": [],
+    "MNRE": [],
+    "MoF": [],
+    "CEA": [],
+    "CTUIL": [],
+    "CERC": [
+      {
+        "type": "Orders",
+        "title": "Petition under Section 63 of the Electricity Act, 2003 for the adoption of transmission charges with respect to the transmission system to be implemented by Anantapur II REZ Transmission Limited (subsidiary of Resonia Limited). Anantapur II REZ Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/462-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 29(5) of the Electricity Act, 2003 read with Regulation 111 of the CERC (Conduct of Business) Regulations, 1999. Gujarat Industries Power Company Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/126-MP-2024.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 79(1)(c) read with Section 79(1)(f) of the Electricity Act, 2003, and applicable provisions of the CERC (Connectivity and General Network Access to the Inter-State Transmission System) Regulations, 2022 and the CERC (Conduct of Business) Regulations, 2023 seeking revision of Effective Date of 100 MW General Network Access granted in favour of Petitioner Hindalco Industries Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/83-MP-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 63 of the Electricity Act, 2003 for the adoption of transmission charges with respect to the Transmission System being established by the Kurnool III PS RE Transmission Limited (a 100% wholly owned subsidiary of Power Grid Corporation of India Limited). Kurnool III PS RE Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/465-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for the adoption of Transmission Charges with respect to the Transmission System being established by POWERGRID KPS 1 and 2 Augmentation Transmission Limited, (erstwhile Khavda V-B1B2 Power Transmission Limited) (a 100% wholly owned subsidiary of Power Grid Corporation of India Limited). POWERGRID KPS 1 and 2 Augmentation Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/349-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 14 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 for amendment of existing RTM Transmission License to POWERGRID Bikaner Transmission System Limited to include transmission project “Augmentation of transformation capacity at 400/220kV Bikaner-II PS in Rajasthan by 1x500 MVA, 400/220kV ICT (10th)”. POWERGRID Bikaner Transmission System Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/444-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 14 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 for amendment of the existing RTM Transmission Licence to POWERGRID Bikaner Neemrana Transmission Limited to include transmission project “Augmentation of transformation capacity at 765/400/220kV Bikaner-III PS in Rajasthan by 1x500 MVA, 400/220kV ICT (6th)”. POWERGRID Bikaner Neemrana Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/442-TL-2025-I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Sections 14 & 15 of the Electricity Act, 2003, read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024, with respect to Transmission Licence to Bidar Transco Limited. Bidar Transco Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/352-TL-2025_F.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Sections 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 and its subsequent Clarification and amendments, if any, with respect to grant of Transmission License to Lakadia B Power Transmission Limited. Lakadia B Power Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/300-TL-2025_F.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for the adoption of Transmission Charges with respect to the Transmission System being established by the Banaskantha Transco Limited (a 100% wholly owned subsidiary of Power Grid Corporation of India Limited). Banaskantha Transco Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/473-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for the adoption of Transmission Charges with respect to the Transmission System being established by the Kurnool-IV Transmission Limited (a 100% wholly owned subsidiary of Power Grid Corporation of India Limited). Kurnool-IV Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/471-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to grant of Transmission License to Kurnool-IV Transmission Limited. Kurnool-IV Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/470-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for the adoption of Transmission Charges with respect to the Transmission System being established by the Rajasthan V Power Transmission Limited (a 100% wholly owned subsidiary of Power Grid Corporation of India Limited). Rajasthan V Power Transmission Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/467-AT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition seeking permission to continue interchange of infirm power, including drawl of start-up power from the grid as per the Deviation Settlement Mechanism (DSM) beyond 30.6.2025 till the first synchronization of RAPP-8 or 30.6.2026, whichever is earlier. Nuclear Power Corporation of India Limited",
+        "date": "2025-06-30",
+        "url": "https://cercind.gov.in/2025/orders/630-MP-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Approval under Section 62 read with Section 79 (1) (d) of the Electricity Act, 2003 and under Regulation 15 (1) (a) and Regulation 23 of the Central Electricity Regulatory Commission (Conduct of Business) Regulations, 2023 for truing up of the transmission tariff for the 2019-24 period under the Central Electricity Regulatory Commission (Terms and Conditions of Tariff) Regulations, 2019 and determination of the transmission tariff for the 2024-29 period under the Central Electricity Regulatory Commission (Terms and Conditions of Tariff) Regulations, 2024 for the Combined Asset under “System Strengthening Scheme – XXIX” in the Northern Region. Power Grid Corporation of India Limited",
+        "date": "2025-06-29",
+        "url": "https://cercind.gov.in/2025/orders/381-TT-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to Banaskantha Transco Limited. Banaskantha Transco Limited",
+        "date": "2025-06-28",
+        "url": "https://cercind.gov.in/2025/orders/472-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to grant of Transmission License to Rajasthan V Power Transmission Limited. Rajasthan V Power Transmission Limited",
+        "date": "2025-06-28",
+        "url": "https://cercind.gov.in/2025/orders/466-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to Kurnool III PS RE Transmission Limited. Kurnool III PS RE Transmission Limited",
+        "date": "2025-06-28",
+        "url": "https://cercind.gov.in/2025/orders/464-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 for grant of transmission license to Anantapur II REZ Transmission Limited. Anantapur II REZ Transmission Limited",
+        "date": "2025-06-28",
+        "url": "https://cercind.gov.in/2025/orders/463-TL-2025_I.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 79(1)(c) of the Electricity Act, 2003 read with Regulations 41 and 42 of the Central Electricity Regulatory Commission (Connectivity and General Network Access to the inter-State Transmission System) Regulations, 2022 inter alia seeking relaxation of the conditions stipulated for submission of land documents under Regulation 5.8(xi)(b) 1.\tM/s. Oyster Renewable Energy Private Limited, 2.\tM/s. Oyster Green Hybrid One Private Limited 1.\tAvaada Energy Private Limited, 2.\tAvaada MPSustainable2 Private Limited,",
+        "date": "2025-06-27",
+        "url": "https://cercind.gov.in/2025/orders/453-MP-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition Application under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission Licence and other related matters) Regulations, 2024 with respect to Transmission License to POWERGRID Koppal Gadag Augmentation Transmission Limited, (erstwhile Gadag II and Koppal II Transmission Limited). POWERGRID Koppal Gadag Augmentation Transmission Limited",
+        "date": "2025-06-27",
+        "url": "https://cercind.gov.in/2025/orders/251-TL-2025-F.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for the2019-24 period and for determination of tariff for the 2024-29 period in respect of Kopili Hydro Electric Project Stage-II (25 MW). NEEPCO Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/47-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for determination of tariff for the period 2024-29 in respect of NLCIL’s Barsingsar Thermal Power Station (BTPS) (2x125MW= 250MW) NLC India Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/622-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for the period 2019-24 in respect of NLCIL’s Barsingsar Thermal Power Station (BTPS) (2x125MW= 250MW) NLC India Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/621-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for Truing-up of the tariff of Tripura Gas Based Power Station (101 MW) for the period 2019-24 and Determination of Tariff for the period 2024-29 NEEPCO",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/620-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for approval of tariff of Farakka STPS Stage-III 1x500 MW) for the 2024-29 period. NTPC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/619-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for determination of tariff for Meja Thermal Power Station for the 2024-29 period. Meja Urja Nigam Private Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/341-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for the 2019-24 period and for determination of tariff for the 2024-29 period in respect of Kopili Hydro Power Station (4 × 50 = 200 MW). NEEPCO Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/337-GT-2024_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 (1) (a) & (k) r/w Section 62 of the Electricity Act, 2003 read with Chapter-V of the CERC (Conduct of Business) Regulations, 1999 & 2023 and Chapter-3, Regulation-8 of CERC (Terms and Conditions of Tariff) Regulations, 2014 for allowing expenditure towards procurement and capitalization of wagons for Kahalgaon Super Thermal Power Station, Stage-I (840 MW). NTPC",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/424-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79(1)(c) and 79(1)(f) of the Electricity Act, 2003, read with Regulations 41 and 42 of the CERC (Connectivity and General Network Access to the Inter-State Transmission System) Regulations, 2022. JSW Renew Energy Five Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/657-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for approval of true-up of tariff of 726.6 (2 x 363.3) MW Combined Cycle Gas Based Power Project at Palatana for the 2019-24 period. OTPCL",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/628-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff of Ramagundam STPS Stage-III (500MW) for the 2019-24 period. NTPC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/627-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for determination of tariff for 2024-29 period of Mejia Thermal Power Station, Units 1, 2 & 3 (3 x 210 MW). DVC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/626-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for 2019- 24 period for Mejia Thermal Power Station, Units 1, 2 & 3 (3 x 210 MW). DVC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/625-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for the period 2019-24 and for determination of tariff for the period 2024-29 in respect of the Kishanganga Power Station. NHPC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/624-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of tariff for the period 2019-24 and for determination of tariff for the period 2024-29 in respect of the Dulhasti Power Station. NHPC Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/623-GT-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 and Section 142 of the Electricity Act 2003 read with Regulation 12 of the CERC (Deviation Settlement Mechanism and related matters) Regulations, 2024, read with Regulation 111 of the CERC (Conduct of Business) Regulations, 1999 dealing with persistent default in payment of Deviation charges applicable under the CERC (Deviation Settlement Mechanism and related matters) Regulations 2024 and other associated issues. NRLDC",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/547-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 28(4) of the Electricity Act, 2003 read with Regulation 10 of the CERC (Fees and Charges of Regional Load Despatch Centre and other related matters) Regulations, 2024 for determination of the fees and charges to be recovered by DVC LDC for the control period 2024-29. DVC LDC",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/366-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 (1) (b) and (f) of the Electricity Act, 2003 seeking adjudication of disputes pertaining to the erroneous deduction of rebate by the Respondents, from the payment made to the Petitioner for supply of power under the PPA. KSK Mahanadi Power Company Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/364-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79(1)(b) and 79(1)(f) of the Electricity Act, 2003 read with Regulation 65 (1) and (3) of the CERC (Conduct of Business) Regulations, 2023 for quashing of the illegal claim raised by the Respondent towards the alleged LD and the immediate threat of unilateral deduction from the monthly invoice raised by the Petitioner. Dhariwal Infrastructure Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/348-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Regulation 40 of Central Electricity Regulatory Commission (power Market) Regulation, 2021 and Clause 8 of Guidelines for Registration and Filing application for Establishing and Operating Over the Counter (OTC) Platform for grant of registration to establish and operate the OTC Platform. Vibhor Tracon Pvt. Ltd.",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/549-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition seeking approval under Section 17 of the Electricity Act, 2003 for bringing on record the appointment of Vardhman Trusteeship Pvt. Ltd., Respondent No.2 as the Security Trustee and for creation of security interest over the assets of Petitioner in favour of the Security Trustee, acting on behalf of and for the benefit of the Lenders (and for any subsequent transferees, assign, novatees thereof and any refinancing lenders to the Project), by way of hypothecation and equitable mortgage on the Project assets, pursuant to unattested Deed of Pledge, Declaration, Undertaking and other Financing Agreements, for the development of the Transmission Project Tumkur - II REZ Power Transmission Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/546-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 15 (1) of the Electricity Act, 2003 read with Regulation 6 (1) of CERC (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020 for grant of Category V license for inter-State trading of Electricity in all States and Union Territories of India in accordance with CERC (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020 amended from time to time. Aayuda Energy Ventures LLP",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/456-TD-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Deviation Settlement Mechanism and Related Matters) Regulations, 2022, and the Central Electricity Regulatory Commission (Connectivity and General Network Access to the inter-State Transmission System) Regulations, 2022, and regarding arbitrary imposition of DSM Charges by SLDC on Petitioner in inter-state sale of power through power exchange under T-GNA. Mangalore Energies Private Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/432-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79(1)(c) of the Electricity Act, 2003 read with Regulations 57 and 58 of the Central Electricity Regulatory Commission (Indian Electricity Grid Code) Regulations, 2023 seeking relaxation of Regulation 22(3)(c) for permitting trial runs and commissioning of Wind Turbine Generators (WTGS) in tranches of at least 10 MW for the Petitioner's Wind Power Project. Powerica Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/431-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under section 79(1)(f) of the Electricity Act, 2003 seeking recovery of illegally deducted trading margin amounts from monthly tariff payments by PTC India Limited. Everest Power Private Limited",
+        "date": "2025-06-24",
+        "url": "https://cercind.gov.in/2025/ROP/423-MP-2025_240625.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to POWERGRID KPS 1 and 2 Augmentation Transmission Limited, (erstwhile Khavda V-B1B2 Power Transmission Limited). POWERGRID KPS 1 and 2 Augmentation Transmission Limited",
+        "date": "2025-06-23",
+        "url": "https://cercind.gov.in/2025/orders/350-TL-2025_I.pdf"
+      },
+      {
+        "type": "Draft Regulation",
+        "title": "1.Public Notice 2.Draft Notification 3.Explanatory Memorandum 4.Public hearing will be held on 23.06.2025 at 11:00 AM. 5.Comments 6.Presentations of stakeholders during Hearing 23.06.2025",
+        "date": "2025-06-23",
+        "url": "https://cercind.gov.in/2025/draft_reg/Publc Notice-DSM-Regulations 2024-2nd-Amendment.pdf"
+      },
+      {
+        "type": "Schedule of Hearing",
+        "title": "Advance Cause List Last modified: 23.06.2025 3:45PM",
+        "date": "2025-06-23",
+        "url": "https://cercind.gov.in/2025/hearing_schedule/AV-JuneV9.pdf"
+      },
+      {
+        "type": "Schedule of Hearing",
+        "title": "Weekly Cause List Last modified: 23.06.2025 3:45PM",
+        "date": "2025-06-23",
+        "url": "https://cercind.gov.in/2025/hearing_schedule/WK-June6.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 79 (1) (c) and (f) of the Electricity Act, 2003 seeking adjudication of transmission charges by Respondent No.1, MSETCL. Ratnagiri Gas and Power Private Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/orders/344-MP-2020.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 29(5) of the Electricity Act, 2003 read with Regulation 111 of the CERC (Conduct of Business) Regulations, 1999 and Regulation 2.3.1(7) of the CERC (Indian Electricity Grid Code) Regulations, 2010. Tata Power Renewable Energy Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/orders/13-MP-2024_ors.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for determination of the transmission tariff for the 2019-24 tariff period for 07 Nos. of assets (OPGW links along with associated communication equipment) under “Establishment of Communication System under Expansion/ Upgradation of SCADA/ EMS System at SLDCs of the Eastern Region (BSPTCL)”. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/251-TT-2024_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of the transmission tariff for the 2019-24 tariff period and determination of the transmission tariff for the   2024-29 tariff period for Combined Asset under “System Strengthening–XX” in the Southern Region. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/384-TT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for determination of tariff for Asset 1- Bypassing of Parli(PG) - Parli(M) 400kV Line Ckt 1 and Parli(PG)-Parli(New) 400kV (quad) Line Ckt 1 at the outskirts of Parli(PG) S/s so as to form Parli(M)-Parli(New) 400kV Ckt 1 direct Line, Reconductoring of Parli(PG)-Parli(M) 400kV line Ckt 1 section with twin HTLS conductor with a minimum capacity of 1940 MVA per circuit at a nominal voltage, 400kV bay upgradation work for above line bays at Parli(M) S/s (The current rating of existing bays upgraded from 2000A to 3150A to suit the reconductoring with Twin HTLS conductor) and Asset 2- Bypassing of Parli(PG) - Parli(M) 400kV Line Ckt 2 and Parli(PG)-Parli(New) 400kV (quad) Line Ckt 2 at the outskirts of Parli(PG) S/s so as to form Parli(M)-Parli(New) 400kV Ckt 2 direct Line, Reconductoring of Parli(PG)- Parli(M) 400kV line Ckt 2 section with twin HTLS conductor with a minimum capacity of 1940 MVA per circuit at a nominal voltage, 400kV bay upgradation work for above line bays at Parli(M) S/s (The current rating of existing bays upgraded from 2000A to 3150A to suit the reconductoring with Twin HTLS conductor) under Western Region Expansion Scheme-XXX (WRES-XXX). Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/191-TT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of the transmission tariff for the 2019-24 tariff period and determination of the transmission tariff for the 2024-29 tariff period for asset: Meerut-Moga 765 kV S/C Transmission Line along with associated bays at Meerut and Moga 765/400 kV Sub-stations with 02 Numbers 240 MVAR line reactors (01 Number Switchable and 01 Number Non-switchable line reactor) each at Meerut and Moga under Northern Region System Strengthening Scheme-XXVI. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/201-TT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for the truing up of the transmission tariff for the 2019-24 tariff period and for the determination of the transmission tariff for the 2024-29 tariff period for the assets under “Removal of Constraints in 400 kV Bays Extensions at 400 kV Vemagiri Sub-station” in the Southern Region. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/380-TT-2025-Ors._200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of transmission tariff for 2019-24 tariff block and determination of transmission tariff for 2024-29 tariff block for transmission asset: 2 Nos. 220 kV Line bays at Saharanpur under scheme named as 2 Nos. 220 kV Line bays at Saharanpur (PG) in the Northern Region. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/192-TT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Sections 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 seeking grant of Transmission License to NERGS-I Power Transmission Limited. NERGS-I Power Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/322-TL-2024_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of capital expenditure for the 2019-24 tariff period and determination for the 2024-29 tariff period in respect of ‘Non-ISTS 400 kV Transmission Lines carrying ISTS Power’ [S/C LILO of 400 kV D/C Durgapur (PG)-Jamshedpur (PG) at DSTPS; S/C LILO of 400 kV D/C Maithon (PG)-Ranchi (PG) at RTPS, D/C 400 kV DSTPS-RTPS, D/C 400 kV RTPS-Ranchi (PG)] of Damodar Valley Corporation. Damodar Valley Corporation",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/640-TT-2025_Anr.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition for truing up of transmission tariff for the 2019-24 period and determination of transmission tariff for the 2024-29 period for the “Combined Asset under ERSS-IV” in the Eastern Region. Power Grid Corporation of India Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/28-TT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for adoption of Transmission Charges with respect to the Transmission System being established by Pune – III Transmission Limited. Pune III Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/75-AT-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 14 of the Electricity Act, 2003 read with Regulation 6 of the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for grant of Trading License and other related matters) Regulations, 2020, for grant of an Inter State Trading Licence. Reliance Industries Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/557-TD-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Sections 14, 15, 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 and any other amendments thereon issued from time to time by this Commission, if any, for grant of Transmission Licence to Eastern Region Expansion Scheme-XXIX Power Transmission Limited. ERSS – XXXIX Power Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/513-TL-2024_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to Chitradurga Bellary REZ Transmission Limited. Chitradurga Bellary REZ Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/468-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 14 of the Electricity Act, 2003 read with Regulation 6 of the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for grant of Trading Licence and other related matters) Regulations, 2020 for grant of inter-state trading licence. Mahagenco Renewable Energy Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/445-TD-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 14 of the Electricity Act, 2003 read with Regulation 6 of the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for grant of trading licence and other related matters) Regulations, 2020 for grant of an inter-state trading licence. Clean Renewable Energy Hybrid Fifteen Private Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/443-TD-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 14, 15, 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to grant of Transmission Licence to Mundra I Transmission Limited. Mundra I Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/441-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 14, 15, 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024, seeking grant of Transmission Licence for Ratle Kiru Power Transmission Limited Ratle Kiru Power Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/433-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Sections 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission Licence and other related matters) Regulations, 2024 with respect to grant of a separate Transmission Licence to Mumbai Urja Marg Limited for implementation of an ISTS Project under RTM Route. Mumbai Urja Marg Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/428-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 14, 15, and 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission Licence and other related matters) Regulations, 2024 with respect to grant of Transmission Licence to Navinal Transmission Limited. Navinal Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/426-TL-2024_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 14 & 15 of the Electricity Act, 2003, read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024, with respect to Transmission License to Bidar Transco Limited. Bidar Transco Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/352-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 and its subsequent Clarification and amendments, if any, with respect to grant of Transmission License to Lakadia B Power Transmission Limited. Lakadia B Power Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/300-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition Application under Section 14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to Gadag II and Koppal II Transmission Limited. POWERGRID Koppal Gadag Augmentation Transmission Ltd",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/251-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 and its subsequent Clarification and replacement, if any, with respect to grant of Transmission License to Paradeep Transmission Limited. Paradeep Transmission Limited",
+        "date": "2025-06-20",
+        "url": "https://cercind.gov.in/2025/ROP/73-TL-2025_200625.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 66 of the Electricity Act read with Regulation 17(12), 54, 55, and 56 of the Central Electricity Regulatory Commission (Power Market) Regulations, 2021 seeking additional time period for meeting the compliances as set out under Regulation 17 of the said Regulations. Hindustan Power Exchange",
+        "date": "2025-06-19",
+        "url": "https://cercind.gov.in/2025/orders/148-MP-2024.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under section 79(1)(f) of the Electricity Act, 2003 seeking quashing of invoices raised by the Respondent No. 1 on the Petitioner for being void, illegal and non-est, and seeking appropriate directions against the Respondent No. 1 to withdraw the invoices uploaded on the PRAAPTI portal and restraining it from issuing or uploading any further invoices on the said portal and from taking any coercive actions in furtherance of such invoices, including by way of seeking regulation of open access under the Electricity (Late Payment Surcharge and Related Matters) Rules, 2022. Maharashtra State Electricity Distribution Company Limited,",
+        "date": "2025-06-12",
+        "url": "https://cercind.gov.in/2025/orders/276-MP-2024.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Sections 17(3) and 17(4) of the Electricity Act, 2003 for the creation of security interest over the Petitioner’s Assets in favour of Respondent No.15 as the Debenture Trustee acting for the benefit of the Debenture Holders. Mumbai Urja Marg Limited",
+        "date": "2025-06-12",
+        "url": "https://cercind.gov.in/2025/orders/309-MP-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14 & 15 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to transmission Licence to POWERGRID Ghiror Transmission Limited (erstwhile Rajasthan IV 4A Power Transmission Limited). POWERGRID Ghiror Transmission Limited",
+        "date": "2025-06-11",
+        "url": "https://cercind.gov.in/2025/orders/237-TL-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Section 14 of the Electricity Act, 2003 read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for grant of trading licence and other related matters) Regulations, 2020. DHARA POWER",
+        "date": "2025-06-11",
+        "url": "https://cercind.gov.in/2025/orders/362-TD-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Sections 14, 15, 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to grant of transmission licence to Rajasthan Part I Power Transmission Limited. Rajasthan Part I Power Transmission Limited",
+        "date": "2025-06-11",
+        "url": "https://cercind.gov.in/2025/orders/252-TL-2025.pdf"
+      },
+      {
+        "type": "Schedule of Hearing",
+        "title": "Key Staff",
+        "date": "2025-06-10",
+        "url": "https://cercind.gov.in/KeyStaff.html"
+      },
+      {
+        "type": "Orders",
+        "title": "Application under Sections 14, 15, 79(1)(e) of the Electricity Act, 2003, read with the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024, seeking Transmission License for Bijapur REZ Transmission Limited. Bijapur REZ Transmission Limited",
+        "date": "2025-06-08",
+        "url": "https://cercind.gov.in/2025/orders/247-TL-2025.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Sections 14, 15 and 79(1)(e) of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission Licence and other related matters) Regulations, 2024 with respect to grant of Transmission Licence to Jamnagar Transmission Limited. Jamnagar Transmission Limited",
+        "date": "2025-06-06",
+        "url": "https://cercind.gov.in/2025/orders/424-TL-2024.pdf"
+      },
+      {
+        "type": "Orders",
+        "title": "Petition under Section 79(1)(b) read with Section 79(1)(f) and Section 19 of Electricity Act, 2003 read with Regulations 9, 19 and 20 of the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020, inter alia, seeking a direction seeking a direction to the Respondent to pay the outstanding amount of Rs. 11,22,05,158 to the Petitioner against the power supplied by the Petitioner to the Respondent. D.B. Power Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/orders/87-MP-2024.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Review Petition under Section 94(1)(f) of the Electricity Act, 2003 read with Regulation 52 of the Central Electricity Regulatory Commission (Conduct of Business) Regulations, 2023 seeking review of the Order dated 05.06.2025 passed in Petition No. 87/MP/2024. Kreate Energy (I) Pvt. Ltd. (Kreate)",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/8-RP-2025Ors_180925.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 and 178 of the Electricity Act, 2003 read with the CERC (Indian Electricity Grid Code) Regulations 2023, the CERC (Ancillary Services) Regulations, 2022, the CERC (Deviation Settlement Mechanism and Related Matters) Regulations, 2024, and Commission’s Suo-Motu Orders in 7/SM/2023 and 2/SM/2025 to secure reliable grid operation GRID Controller of India Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/Dy.292-2025_052625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Sections 17(3) and 17(4) of the Electricity Act, 2003 for creation of security interest over all the movable and immovable assets of the Petitioner in favour of the Catalyst Trusteeship Limited, Respondent No. 10. Nangalbibra Bongaigaon Transmission Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/586-MP-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 79 of the Electricity Act, 2003 read with Regulations 41 and 42 of the Central Electricity Regulatory Commission (Connectivity and General Network Access to the inter-State Transmission System) Regulations, 2022. Sprng Vayu Vidyut Private Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/616-MP-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 14 of the Electricity Act, 2003 read with Regulation 6 of the Central Electricity Regulatory Commission (Procedure, Terms and Conditions for grant of Trading License and other related matters) Regulations, 2020, for grant of an Inter State Trading Licence. Reliance Industries Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/557-TD-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 63 of the Electricity Act, 2003 for Adoption of Tariff discovered through Competitive Bidding Process for Setting up of 600 MW ISTS connected Wind Power Projects (Wind-2) in India under Tariff-Based Competitive Bidding. SJVN Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/582-AT-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 15 (1) of the Electricity Act, 2003 read with Regulation 6 (1) of CERC (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020 for grant of Category V license for inter-State trading of Electricity in all States and Union Territories of India. Operative Save Urja Solutions Private Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/553-TD-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section ·14 & 15 of the Electricity Act, 2003 read with Central Electricity Regulatory Commission (Procedure, Terms and Conditions for Grant of Transmission License and other related matters) Regulations, 2024 with respect to Transmission License to South Olpad Transmission Limited. Powergrid South Olpad Transmission Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/494-TL-2024_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 15 (1) of the Electricity Act, 2003 read with Regulation 6 (1) of CERC (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020 for grant of Category V license for inter-State trading of Electricity in all States and Union Territories of India in accordance with CERC (Procedure, Terms and Conditions for Grant of Trading License and other related matters) Regulations, 2020 amended from time to time. Aayuda Energy Ventures LLP",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/456-AT-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Petition under Section 63 of the Electricity Act, 2003 for adoption of tariff discovered through Competitive Bidding Process for Supply of 1200 MW Firm and Dispatchable Power (FDRE – 2) from ISTS-Connected Renewable Energy (RE) Power Projects with Energy Storage System with “Greenshoe Option” of additional capacity upto 1200 MW. SJVN Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/312-AT-2025_050625.pdf"
+      },
+      {
+        "type": "Record of Proceedings",
+        "title": "Application under Section 63 of the Electricity Act, 2003 for Adoption of Transmission Charges with respect to the Transmission System being established by Pune – III Transmission Limited. Pune – III Transmission Limited",
+        "date": "2025-06-05",
+        "url": "https://cercind.gov.in/2025/ROP/75-AT-2025_050625.pdf"
+      }
+    ],
+    "Grid India": []
+  },
+  "state_map": {},
+  "ut_map": {},
+  "last_updated": "2025-10-08 15:10:04 IST"
+}

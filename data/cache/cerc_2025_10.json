@@ -1,0 +1,25 @@
+{
+  "central_map": {
+    "MoP": [],
+    "MNRE": [],
+    "MoF": [],
+    "CEA": [],
+    "CTUIL": [],
+    "CERC": [
+      {
+        "date": "2025-10-25",
+        "title": "1.Public Notice 2.Draft Notification",
+        "url": "https://cercind.gov.in/2025/draft_reg/PNstaff_consultant-6th-amnd.pdf",
+        "type": "Draft Regulation"
+      },
+      {
+        "date": "2025-10-23",
+        "title": "1.Public Notice 2.Draft Notification 3.Explanatory Memorandum",
+        "url": "https://cercind.gov.in/2025/draft_reg/PN-REC-Regulations 2025-1st-Amendment.pdf",
+        "type": "Draft Regulation"
+      }
+    ],
+    "Grid India": []
+  },
+  "last_updated": "2025-10-10T12:48:04.953514+05:30"
+}
