@@ -1,162 +1,254 @@
 # app.py
-# NSEFI dashboard — base look preserved; three floating update boxes on the left
-# CTUIL (Latest News) scraper wired for October 2025 test run
+# NSEFI dashboard — fixed UI with FLOATING (auto-scroll) update panels that pause on hover and on user scroll
+
 from __future__ import annotations
-
-import re
 import base64
-import calendar
 from pathlib import Path
-from datetime import datetime
-from urllib.parse import urljoin
+from datetime import datetime, timedelta, timezone
 
-import requests
-from bs4 import BeautifulSoup
 import streamlit as st
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Config
+# Page config
 # ─────────────────────────────────────────────────────────────────────────────
-TITLE = "NSEFI policy and regulatory monitoring dashboard"
-DATA_DIR = Path("data")
-NSEFI_LOGO_CANDIDATES = [
-    "12th_year_anniversary_logo_transparent.png",
-    "12th_year_anniversary_logo_transparent",
-    "MNRE.png",
-]
-# Central/State/UT lists for the flyout menus (kept same structure you asked)
-CENTRAL_ALL = ["MoP", "MNRE", "MoF", "CEA", "CTUIL", "CERC", "Grid India"]
-STATES = sorted([
-    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
-    "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-    "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
-    "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-    "Uttar Pradesh", "Uttarakhand", "West Bengal",
-])
-UTS = sorted([
-    "Andaman and Nicobar Islands", "Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu", "Delhi",
-    "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry",
-])
-
 st.set_page_config(
-    page_title=TITLE,
+    page_title="NSEFI policy and regulatory monitoring dashboard",
     layout="wide",
     page_icon="🟩",
 )
+
+TITLE = "NSEFI policy and regulatory monitoring dashboard"
+DATA_DIR = Path("data")
+
+# Canonical lists
+CENTRAL_ALL = [
+    "MoP", "MNRE", "MoF", "CEA", "CTUIL", "CERC", "Grid India"
+]
+
+STATES = [
+    "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa",
+    "Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala",
+    "Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland",
+    "Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
+    "Uttar Pradesh","Uttarakhand","West Bengal"
+]
+
+UTS = [
+    "Andaman and Nicobar Islands","Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu","Delhi",
+    "Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"
+]
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Utilities
 # ─────────────────────────────────────────────────────────────────────────────
 def ist_now() -> datetime:
-    # local machine time is fine for display
-    return datetime.now()
+    ist = timezone(timedelta(hours=5, minutes=30))
+    return datetime.now(tz=ist)
 
-def _find_logo_data_uri() -> str | None:
-    for name in NSEFI_LOGO_CANDIDATES:
-        p = DATA_DIR / name
-        if p.exists():
-            b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
-            mime = "image/png" if p.suffix.lower() == ".png" else "image/jpeg"
-            return f"data:{mime};base64,{b64}"
+def find_asset(prefix_or_exact: str) -> Path | None:
+    if not DATA_DIR.exists():
+        return None
+    p = DATA_DIR / prefix_or_exact
+    if p.exists():
+        return p
+    for ext in ("png", "jpg", "jpeg", "svg", "webp"):
+        q = DATA_DIR / f"{prefix_or_exact}.{ext}"
+        if q.exists():
+            return q
+    for q in DATA_DIR.iterdir():
+        if q.is_file() and q.stem.lower() == prefix_or_exact.lower():
+            return q
     return None
 
-def _month_year(dt: datetime) -> tuple[int, int]:
-    return dt.year, dt.month
+def image_to_data_uri(path: Path | None) -> str | None:
+    if not path or not path.exists():
+        return None
+    ext = path.suffix.lower()
+    if ext == ".svg":
+        return f"data:image/svg+xml;utf8,{path.read_text(encoding='utf-8')}"
+    mime = "image/png" if ext == ".png" else ("image/jpeg" if ext in (".jpg",".jpeg") else "image/webp")
+    b64 = base64.b64encode(path.read_bytes()).decode("utf-8")
+    return f"data:{mime};base64,{b64}"
+
+# Try multiple names; fall back to hosted logo
+NSEFI_URI = image_to_data_uri(find_asset("12th_year_anniversary_logo_transparent")) \
+            or image_to_data_uri(find_asset("NSEFI")) \
+            or image_to_data_uri(find_asset("MNRE")) \
+            or "https://nsefi.in/wp-content/uploads/2023/02/NSEFI-Logo-1.png"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CSS (base appearance preserved) + nav flyouts + floating cards
+# CSS (fixed appearance)
 # ─────────────────────────────────────────────────────────────────────────────
 def css() -> str:
     return f"""
 <style>
+/* remove default chrome */
+#MainMenu {{ visibility:hidden; }}
+footer {{ visibility:hidden; }}
+header {{ visibility:hidden; }}
+.block-container {{ padding-top: 1rem !important; }}
+
+/* background + font */
 html, body, .stApp {{
   background:
     radial-gradient(1200px 700px at 12% -10%, #F3FAF6 0%, transparent 60%),
     radial-gradient(1200px 700px at 90% 0%, #E8F3EE 0%, transparent 65%),
     linear-gradient(180deg, #FFFFFF 0%, #F7FBF9 100%);
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #0F4237;
 }}
-#MainMenu, footer, header {{ visibility: hidden; height: 0; }}
-.block-container {{ padding-top: 0 !important; margin-top: 0 !important; }}
 
-/* top bar */
-.topbar {{ margin-top: 1.2rem; font-weight:700; color:#0F4237; font-size:14px; }}
-.titlebar {{ display:flex; align-items:center; justify-content:center; gap:12px; }}
-.pagetitle {{ font-weight:900; color:#0F4237; font-size: clamp(28px, 3.2vw, 40px); }}
-.pagetitle-logo img {{ height: 60px; width:auto; }}
+.topbar {{
+  display:flex; align-items:center; justify-content:space-between;
+  margin: .4rem 0 1.0rem 0;
+  font-weight:700; color:#0F4237; font-size: 14px;
+}}
+.topbar .brand img {{ height: 48px; width:auto; }}
 
-/* navbar */
-.navbar {{ margin-top: 1.4rem; background:#165843; border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.12); }}
-.navbar > ul {{ list-style:none; margin:0; padding:0; display:flex; }}
+.pagetitle {{
+  font-weight:900; color:#1e2a2a; 
+  font-size: clamp(28px, 4.2vw, 48px);
+  margin: 0.4rem 0 1.0rem 0;
+}}
+
+/* navbar with hover flyouts */
+.navbar {{
+  margin-top: 0.4rem; background:#165843; border-radius:16px; 
+  box-shadow:0 2px 10px rgba(0,0,0,.12);
+}}
+.navbar > ul {{ list-style:none; margin:0; padding:0; display:flex; gap:8px; }}
 .navbar > ul > li {{ position:relative; }}
 .navbar a, .navbar span {{
-  display:block; padding:10px 16px; color:#fff; text-decoration:none;
-  font-weight:700; font-size:15px;
+  display:block; padding:12px 22px; color:#fff; text-decoration:none; 
+  font-weight:700; font-size:16px; border-radius:14px;
 }}
-.navbar > ul > li:hover {{ background:#0d3d30; border-radius:12px; }}
+.navbar > ul > li:hover {{ background:#0d3d30; border-radius:14px; }}
 
-/* flyout menus for Policies/Regulations */
-.navbar ul li .dropdown {{
+.dropdown {{
   position:absolute; top:100%; left:0; background:#0d3d30;
-  border-radius:10px; box-shadow:0 6px 16px rgba(0,0,0,0.25);
-  z-index:10001; padding:8px; visibility:hidden; opacity:0; transition:opacity .12s;
-  min-width: 220px;
+  border-radius:14px; box-shadow:0 10px 22px rgba(0,0,0,0.25);
+  z-index:10001; padding:10px; visibility:hidden; opacity:0; transition:opacity .12s;
+  min-width: 240px;
 }}
 .navbar ul li:hover > .dropdown {{ visibility:visible; opacity:1; }}
-.navbar .dropdown .root {{ list-style:none; margin:0; padding:0; }}
-.navbar .dropdown .root > li {{ position:relative; }}
-.navbar .dropdown .root > li > span {{
-  display:flex; align-items:center; justify-content:space-between; color:#fff;
-  font-weight:800; font-size:14px; padding:8px 12px; border-radius:8px; cursor:default;
-}}
-.navbar .dropdown .root > li > span::after {{ content:"›"; opacity:.8; margin-left:12px; }}
-.navbar .dropdown .root > li:hover > span {{ background:rgba(255,255,255,.12); }}
-.navbar .dropdown .flyout {{
-  position:absolute; top:0; left:100%; background:#0d3d30; border-radius:10px;
-  min-width:280px; max-height: 320px; overflow:auto; padding:8px;
-  box-shadow:0 6px 16px rgba(0,0,0,.25); z-index:10002; visibility:hidden; opacity:0; transition:opacity .12s;
-}}
-.navbar .dropdown .root > li:hover > .flyout {{ visibility:visible; opacity:1; }}
-.navbar .dropdown .flyout ul {{ list-style:none; margin:0; padding:0; }}
-.navbar .dropdown .flyout li a {{
-  display:block; padding:7px 10px; border-radius:8px; color:#fff; font-size:14px; text-decoration:none;
-}}
-.navbar .dropdown .flyout li a:hover {{ background:rgba(255,255,255,.12); }}
 
-/* headings */
-.section-title {{ font-size:18px; font-weight:900; color:#0F4237; margin: 1.0em 0 8px 0; }}
-
-/* date badge + rows (card content) */
-.date-badge {{
-  min-width:48px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  border-radius:10px; background:#fff; color:#0F4237; font-weight:900; line-height:1;
-  padding:8px 8px; margin-right:12px;
+.dropdown .root {{ list-style:none; margin:0; padding:0; }}
+.dropdown .root > li {{ position:relative; }}
+.dropdown .root > li > span {{
+  display:flex; align-items:center; justify-content:space-between; 
+  color:#fff; font-weight:800; font-size:14px;
+  padding:10px 12px; border-radius:10px; cursor:default;
 }}
-.date-badge .day {{ font-size:18px; }}
-.date-badge .mon {{ font-size:11px; text-transform:uppercase; opacity:.8; margin-top:2px; }}
-.row {{ display:flex; gap:12px; align-items:flex-start; padding:12px 14px;
-        border-bottom:1px solid rgba(255,255,255,.08); }}
-.row-title a {{ color:#fff; font-weight:700; text-decoration:none; }}
-.row-title a:hover {{ text-decoration:underline; }}
-.row-meta {{ font-size:12px; opacity:.85; margin-top:6px; }}
-
-/* floating panels (left side) */
-.float-stack {{ position: fixed; left: 18px; top: 160px; width: 480px; z-index: 9998; }}
-.float-card {{
-  background:#0F4237; color:#fff; border-radius:12px; box-shadow:0 10px 22px rgba(16,40,32,0.18);
-  margin-bottom:14px; overflow:hidden;
+.dropdown .root > li > span::after {{ content:"›"; opacity:.8; margin-left:12px; }}
+.dropdown .root > li:hover > span {{ background:rgba(255,255,255,.12); }}
+.dropdown .flyout {{
+  position:absolute; top:0; left:100%; background:#0d3d30; border-radius:12px;
+  min-width:280px; max-height: 340px; overflow:auto; padding:10px; 
+  box-shadow:0 10px 22px rgba(0,0,0,.25);
+  z-index:10002; visibility:hidden; opacity:0; transition:opacity .12s;
 }}
-.float-head {{ padding:12px 16px; font-weight:800; background:#0e3f34; font-size:20px; }}
-.float-body {{ max-height: 38vh; overflow:auto; }}
-.float-empty {{ padding:18px 16px; opacity:.95; }}
+.dropdown .root > li:hover > .flyout {{ visibility:visible; opacity:1; }}
+.dropdown .flyout ul {{ list-style:none; margin:0; padding:0; }}
+.dropdown .flyout li a {{
+  display:block; padding:8px 10px; border-radius:8px; color:#fff; 
+  font-size:14px; text-decoration:none;
+}}
+.dropdown .flyout li a:hover {{ background:rgba(255,255,255,.12); }}
 
-/* Streamlit decorator clean ups */
+.section-title {{ 
+  font-size:22px; font-weight:900; color:#0F4237; 
+  margin: 1.0rem 0 12px 0; 
+}}
+
+.col-heading {{
+  font-weight:900; font-size:20px; margin: .5rem 0 .4rem 0; 
+}}
 .stSelectbox label {{ display:none !important; }}
+.stSelectbox > div > div {{ border-radius:12px !important; }}
+
+/* floating card (mouse scroll + auto float) */
+.fcard {{
+  background:#0F4237; color:#fff; border-radius:14px; 
+  box-shadow:0 14px 22px rgba(16,40,32,0.18);
+  padding:0; overflow:hidden; position:relative;
+  max-height: 400px;  /* floating window height */
+}}
+.fcard-body {{
+  padding:0; max-height:400px; overflow-y:auto; scroll-behavior: smooth;
+}}
+.urow {{
+  display:flex; gap:14px; align-items:flex-start; padding:14px 16px; 
+  font-size:14px; line-height:1.4; border-bottom:1px solid rgba(255,255,255,.10);
+}}
+.badge {{
+  min-width:52px; display:flex; flex-direction:column; align-items:center; 
+  justify-content:center; border-radius:10px; background:#fff; color:#0F4237; 
+  font-weight:900; line-height:1; padding:8px 8px;
+}}
+.badge .day {{ font-size:18px; }}
+.badge .mon {{ font-size:11px; text-transform:uppercase; opacity:.8; margin-top:2px; }}
+.urow a {{ color:#fff; font-weight:700; text-decoration:none; }}
+.urow a:hover {{ text-decoration:underline; }}
+
+.fcard {{ margin-bottom: 18px; }}
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 """
 
+# JS: auto-scroll each .fcard-body (float). Pause on hover or user scroll; resume after idle.
+def floating_js() -> str:
+    return """
+<script>
+(function(){
+  function init(){
+    const speedPxPerSec = 26;           // float speed
+    const resumeDelayMs = 6000;          // resume after idle
+    const raf = window.requestAnimationFrame || (fn=>setTimeout(fn,16));
+
+    document.querySelectorAll(".fcard-body").forEach((el) => {
+      let pausedHover = false;
+      let pausedUser  = false;
+      let lastUserTs  = 0;
+
+      function pauseUser(){ pausedUser = true; lastUserTs = Date.now(); }
+      function maybeResume(){
+        if (pausedUser && (Date.now() - lastUserTs) > resumeDelayMs){
+          pausedUser = false;
+        }
+      }
+      // Pause conditions
+      el.addEventListener("mouseenter", ()=> pausedHover = true);
+      el.addEventListener("mouseleave", ()=> pausedHover = false);
+      ["wheel","touchstart","touchmove","scroll","keydown"].forEach(evt=>{
+        el.addEventListener(evt, pauseUser, {passive:true});
+      });
+
+      // Auto float loop
+      (function tick(){
+        maybeResume();
+        if (!pausedHover && !pausedUser){
+          const step = speedPxPerSec / 60.0; // per frame (approx)
+          el.scrollTop += step;
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
+            el.scrollTop = 0; // loop
+          }
+        }
+        raf(tick);
+      })();
+    });
+  }
+  // Run when DOM is ready; Streamlit reruns, so slight delay is safer
+  const start = () => setTimeout(init, 50);
+  if (document.readyState === "complete") start();
+  else window.addEventListener("load", start);
+})();
+</script>
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Navbar with flyouts
+# ─────────────────────────────────────────────────────────────────────────────
 def _links_list(page: str, level: str, names: list[str]) -> str:
     return "".join(
         f'<li><a target="_self" href="?page={page}&level={level}&entity={name.replace(" ", "%20")}">{name}</a></li>'
@@ -170,9 +262,18 @@ def dropdown_html(page: str) -> str:
     return f"""
 <div class="dropdown">
   <ul class="root">
-    <li class="has-fly"><span>Central</span><div class="flyout"><ul>{central_links}</ul></div></li>
-    <li class="has-fly"><span>States</span><div class="flyout"><ul>{states_links}</ul></div></li>
-    <li class="has-fly"><span>Union Territories</span><div class="flyout"><ul>{uts_links}</ul></div></li>
+    <li class="has-fly">
+      <span>Central</span>
+      <div class="flyout"><ul>{central_links}</ul></div>
+    </li>
+    <li class="has-fly">
+      <span>States</span>
+      <div class="flyout"><ul>{states_links}</ul></div>
+    </li>
+    <li class="has-fly">
+      <span>Union Territories</span>
+      <div class="flyout"><ul>{uts_links}</ul></div>
+    </li>
   </ul>
 </div>
 """
@@ -189,172 +290,109 @@ def navbar_html() -> str:
 </nav>
 """
 
+# ─────────────────────────────────────────────────────────────────────────────
+# UI helpers
+# ─────────────────────────────────────────────────────────────────────────────
 def render_header():
     now = ist_now()
     date_str = f"{now.strftime('%d')} - {now.strftime('%B').lower()} - {now.strftime('%Y')}"
     time_str = f"{now.strftime('%H:%M:%S')} IST"
-    logo_uri = _find_logo_data_uri()
 
     st.markdown(
         f"""
         <div class="topbar">
-            <span>{date_str}</span>
-            <span style="opacity:.5">|</span>
-            <span>{time_str}</span>
+          <div class="ts">{date_str} &nbsp;|&nbsp; {time_str}</div>
+          <div class="brand">{f'<img alt="NSEFI logo" src="{NSEFI_URI}"/>' if NSEFI_URI else 'NSEFI'}</div>
         </div>
-        <div class="titlebar">
-            <h1 class="pagetitle">{TITLE}</h1>
-            {f'<div class="pagetitle-logo"><img src="{logo_uri}" alt="NSEFI logo"/></div>' if logo_uri else ''}
-        </div>
+        <h1 class="pagetitle">{TITLE}</h1>
         {navbar_html()}
         """,
         unsafe_allow_html=True,
     )
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CTUIL scraper (Latest News) — October 2025 test
-# ─────────────────────────────────────────────────────────────────────────────
-CTUIL_BASE = "https://ctuil.in"
-CTUIL_LATEST = "https://ctuil.in/latestnews"
-
-DATE_PATTERNS = [
-    r"(\d{2})\.(\d{2})\.(\d{4})",      # 08.10.2025
-    r"(\d{2})[/-](\d{2})[/-](\d{4})",  # 08/10/2025 or 08-10-2025
-    r"(\d{2})\s+([A-Za-z]+)\s+(\d{4})" # 08 Oct 2025
-]
-
-def _parse_date(text: str) -> datetime | None:
-    t = text.strip()
-    for pat in DATE_PATTERNS:
-        m = re.search(pat, t)
-        if not m:
-            continue
-        if len(m.groups()) == 3:
-            d, b, y = m.groups()
-            try:
-                if b.isalpha():
-                    # e.g., 08 Oct 2025
-                    return datetime.strptime(" ".join([d, b[:3], y]), "%d %b %Y")
-                else:
-                    # e.g., 08.10.2025 or 08/10/2025
-                    return datetime(int(y), int(b), int(d))
-            except Exception:
-                pass
-    return None
-
-def harvest_ctuil_month(year: int, month: int) -> list[dict]:
-    """
-    Return a list of items: [{date:'YYYY-MM-DD', title:'...', url:'...', type:'CTUIL'}]
-    filtered for given year/month (e.g. October 2025).
-    """
+def _badge(iso_date: str) -> str:
     try:
-        r = requests.get(CTUIL_LATEST, timeout=20)
-        r.raise_for_status()
-    except Exception:
-        return []
-
-    soup = BeautifulSoup(r.text, "html.parser")
-
-    # The page has a table-like list (Sr. No / Date / Title).
-    # We'll search rows that contain a date cell and a title link.
-    items: list[dict] = []
-
-    # Find all rows that could contain date+title.
-    # Strategy: look for any element whose text matches a date and has a link in the same row/parent.
-    for row in soup.find_all(["tr", "div", "li", "article", "section"]):
-        txt = row.get_text(" ", strip=True)
-        dt = _parse_date(txt)
-        if not dt:
-            continue
-
-        if dt.year != year or dt.month != month:
-            continue
-
-        # Find the first meaningful title link inside this row
-        a = row.find("a", href=True)
-        if not a:
-            continue
-
-        title = a.get_text(" ", strip=True)
-        href = urljoin(CTUIL_BASE, a["href"])
-
-        items.append({
-            "date": dt.strftime("%Y-%m-%d"),
-            "title": title,
-            "url": href,
-            "type": "CTUIL",
-        })
-
-    # Sort by date desc, then title
-    items.sort(key=lambda x: (x["date"], x["title"]), reverse=True)
-    return items
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Render helpers (floating cards)
-# ─────────────────────────────────────────────────────────────────────────────
-def _fmt_badge(iso_date: str) -> str:
-    try:
-        y, m, d = map(int, iso_date.split("-"))
+        y, m, d = [int(x) for x in iso_date.split("-")]
         dt = datetime(y, m, d)
-        return f"<div class='date-badge'><div class='day'>{dt.strftime('%d')}</div><div class='mon'>{dt.strftime('%b').upper()}</div></div>"
+        return f"<div class='badge'><div class='day'>{dt.strftime('%d')}</div><div class='mon'>{dt.strftime('%b').upper()}</div></div>"
     except Exception:
-        return "<div class='date-badge'><div class='day'>—</div><div class='mon'></div></div>"
+        return "<div class='badge'><div class='day'>—</div><div class='mon'></div></div>"
 
-def _items_html(items: list[dict]) -> str:
-    rows = []
-    for it in items:
-        badge = _fmt_badge(it.get("date", ""))
-        title = (it.get("title", "") or "").replace("<", "&lt;").replace(">", "&gt;")
-        url = it.get("url")
-        link = f"<a href='{url}' target='_blank' rel='noopener'>{title}</a>" if url else title
-        rows.append(f"<div class='row'>{badge}<div class='row-main'><div class='row-title'>{link}</div><div class='row-meta'>CTUIL</div></div></div>")
-    return "".join(rows)
+def _row_html(date_iso: str, title: str, url: str, tag: str = "Update") -> str:
+    return f"""
+    <div class="urow">
+      {_badge(date_iso)}
+      <div class="row-main">
+        <div class="row-title"><a href="{url}" target="_blank" rel="noopener">{title}</a></div>
+        <div class="row-meta"><span class="pill">{tag}</span></div>
+      </div>
+    </div>
+    """
 
-def floating_tripanel(ctuil_items: list[dict]):
-    # three stacked floating panels (left side)
-    st.markdown("<div class='float-stack'>", unsafe_allow_html=True)
+def _dummy_updates() -> tuple[list[dict], list[dict], list[dict]]:
+    # Placeholder sample items (keeps UI shape stable)
+    return (
+        [
+            {"date":"2025-10-12","title":"CERC: example regulation update 1","url":"#","type":"Regulatory"},
+            {"date":"2025-10-09","title":"MNRE: example policy circular","url":"#","type":"Update"},
+            {"date":"2025-10-08","title":"CTUIL: What’s New — sample note","url":"#","type":"Update"},
+            {"date":"2025-10-05","title":"MoP: example memo","url":"#","type":"Update"},
+            {"date":"2025-10-02","title":"CEA: example guideline","url":"#","type":"Update"},
+        ],
+        [
+            {"date":"2025-10-11","title":"Chhattisgarh: example update","url":"#","type":"Regulatory"},
+            {"date":"2025-10-09","title":"Goa: example policy bulletin","url":"#","type":"Update"},
+            {"date":"2025-10-06","title":"Rajasthan: example notice","url":"#","type":"Update"},
+        ],
+        [
+            {"date":"2025-10-11","title":"Chandigarh: example order","url":"#","type":"Regulatory"},
+            {"date":"2025-10-07","title":"Delhi: example circular","url":"#","type":"Update"},
+            {"date":"2025-10-03","title":"J&K: sample update","url":"#","type":"Update"},
+        ],
+    )
 
-    # Central (CTUIL) — bold & larger as requested
-    st.markdown("<div class='float-card'><div class='float-head'>Central</div>", unsafe_allow_html=True)
-    if ctuil_items:
-        st.markdown(f"<div class='float-body'>{_items_html(ctuil_items)}</div></div>", unsafe_allow_html=True)
+def _panel_html(items: list[dict], body_id: str) -> str:
+    """Floating card with mouse scroll + auto-scroll script (no arrows)."""
+    if not items:
+        body = "<div class='urow'><div>No updates found.</div></div>"
     else:
-        st.markdown("<div class='float-empty'>No updates found.</div></div>", unsafe_allow_html=True)
-
-    # States
-    st.markdown("<div class='float-card'><div class='float-head'>States</div><div class='float-empty'>No updates found.</div></div>", unsafe_allow_html=True)
-
-    # UTs
-    st.markdown("<div class='float-card'><div class='float-head'>UTs</div><div class='float-empty'>No updates found.</div></div>", unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        body = "".join(_row_html(it.get("date",""), it.get("title",""), it.get("url","#"), it.get("type","Update")) for it in items)
+    return f"""
+    <div class='fcard'>
+      <div id="{body_id}" class='fcard-body'>
+        {body}
+      </div>
+    </div>
+    """
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Pages
+# Main page
 # ─────────────────────────────────────────────────────────────────────────────
 def page_home():
-    # Only October 2025 for the test run you asked
-    year, month = 2025, 10
+    central_items, state_items, ut_items = _dummy_updates()
 
-    ctuil_items = harvest_ctuil_month(year, month)
+    now = ist_now()
+    st.markdown(f"<div class='section-title'>Latest updates — {now.strftime('%B')} {now.year}</div>", unsafe_allow_html=True)
 
-    # Heading (kept your semantics)
-    st.markdown(f"<div class='section-title'>Latest updates — {calendar.month_name[month]} {year}</div>",
-                unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1, 1, 1])
 
-    # Show the three floating boxes on the left
-    floating_tripanel(ctuil_items)
+    with c1:
+        st.markdown("<div class='col-heading'>Central</div>", unsafe_allow_html=True)
+        st.selectbox("Central filter", ["All"] + CENTRAL_ALL, index=0, key="central_filter", label_visibility="collapsed")
+        st.markdown(_panel_html(central_items, "body-central"), unsafe_allow_html=True)
 
-    # Keep the center page empty (as per your base); floating panels carry the feed
-    st.write("")  # spacer
+    with c2:
+        st.markdown("<div class='col-heading'>States</div>", unsafe_allow_html=True)
+        st.selectbox("State filter", ["All"] + STATES, index=0, key="state_filter", label_visibility="collapsed")
+        st.markdown(_panel_html(state_items, "body-states"), unsafe_allow_html=True)
 
-def page_policies():
-    st.subheader("Policies")
-    st.info("Hover the menu (top) to pick Central / States / UTs. (Base retained)")
+    with c3:
+        st.markdown("<div class='col-heading'>UTs</div>", unsafe_allow_html=True)
+        st.selectbox("UT filter", ["All"] + UTS, index=0, key="ut_filter", label_visibility="collapsed")
+        st.markdown(_panel_html(ut_items, "body-uts"), unsafe_allow_html=True)
 
-def page_regulations():
-    st.subheader("Regulations")
-    st.info("Hover the menu (top) to pick Central / States / UTs. (Base retained)")
+    # Inject floating JS once panels exist
+    st.markdown(floating_js(), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Entry
@@ -364,18 +402,20 @@ def main():
     render_header()
 
     page = st.query_params.get("page", "home")
-    if isinstance(page, list):  # just to be safe
+    if isinstance(page, list):
         page = page[0]
 
     if page == "home":
         page_home()
-    elif page == "policies":
-        page_policies()
-    elif page == "regulations":
-        page_regulations()
     elif page == "representations":
         st.subheader("Representations")
-        st.info("This section remains from your base. (No changes requested.)")
+        st.info("Your representations page placeholder.")
+    elif page == "policies":
+        st.subheader("Policies")
+        st.info("Use the hover menu to pick Central / States / UTs / Entity.")
+    elif page == "regulations":
+        st.subheader("Regulations")
+        st.info("Use the hover menu to pick Central / States / UTs / Entity.")
     else:
         page_home()
 
