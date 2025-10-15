@@ -1,166 +1,149 @@
 # backend/adapters/ctuil.py
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Dict
+from typing import Iterable, List, Dict, Optional
 from urllib.parse import urljoin
 
+import re
 import requests
 from bs4 import BeautifulSoup
 
-CTUIL_NEWS_URL = "https://ctuil.in/latestnews"
-CTUIL_SOURCE = "CTUIL"
+# The AJAX endpoint
+CTUIL_LATEST_URL = "https://ctuil.in/latestnews?p=ajax"
 
-# Robust month map (short and long)
-_MONTHS = {
-    "jan": 1, "january": 1,
-    "feb": 2, "february": 2,
-    "mar": 3, "march": 3,
-    "apr": 4, "april": 4,
-    "may": 5,
-    "jun": 6, "june": 6,
-    "jul": 7, "july": 7,
-    "aug": 8, "august": 8,
-    "sep": 9, "sept": 9, "september": 9,
-    "oct": 10, "october": 10,
-    "nov": 11, "november": 11,
-    "dec": 12, "december": 12,
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/125.0.0.0 Safari/537.36"
+    ),
+    "Accept": "*/*",
+    "X-Requested-With": "XMLHttpRequest",
+    "Origin": "https://ctuil.in",
+    "Referer": "https://ctuil.in/latestnews",
 }
-
-_date_cleaner = re.compile(r"\s+")
 
 
 @dataclass
-class UpdateItem:
-    date: str    # YYYY-MM-DD
+class CtuilItem:
+    date: datetime
     title: str
-    url: str
-    type: str = "Update"   # keep the same shape as your other sources
-    source: str = CTUIL_SOURCE
+    href: str
+    type: str = "Update"
+
+    def to_dict(self) -> Dict[str, str]:
+        return {
+            "date": self.date.strftime("%Y-%m-%d"),
+            "title": self.title.strip(),
+            "url": self.href,
+            "type": self.type,
+        }
 
 
-def _mk_abs(href: str) -> str:
-    if not href:
-        return CTUIL_NEWS_URL
-    return urljoin(CTUIL_NEWS_URL, href)
+def _clean_text(s: str) -> str:
+    """Standardizes whitespace to a single space and strips."""
+    if not s:
+        return ""
+    return re.sub(r"\s+", " ", s).strip()
 
 
-def _coerce_date(day_text: str, mon_text: str, year: int) -> str | None:
-    day_text = day_text.strip()
-    mon_text = mon_text.strip().lower()
+def _parse_date_ddmmyyyy(raw: str) -> Optional[datetime]:
+    """Parses date strings like '14.10.2025'."""
+    if not raw:
+        return None
+    raw = raw.strip().replace(".", "-").replace("/", "-")
     try:
-        d = int(re.sub(r"[^\d]", "", day_text) or "1")
-        m = _MONTHS.get(mon_text[:3], None)
-        if m is None:
-            # try exact (e.g., 'sept')
-            m = _MONTHS.get(mon_text, None)
-        if not m:
-            return None
-        dt = datetime(year, m, d)
-        return dt.strftime("%Y-%m-%d")
-    except Exception:
+        return datetime.strptime(raw, '%d-%m-%Y')
+    except ValueError:
+        print(f"WARN: Date parsing failed for: '{raw}'")
         return None
 
 
-def _extract_items(html: str, year: int, month: int) -> List[UpdateItem]:
+def _iter_latest_news_rows(soup: BeautifulSoup) -> Iterable[BeautifulSoup]:
+    """
+    Finds the first table and directly iterates its rows (tr),
+    bypassing the need for a <tbody> tag.
+    """
+    table = soup.find("table")
+    if not table:
+        print("DEBUG: Could not find any <table> element in the response.")
+        return []
+
+    # FIX: Search for <tr> directly within the table. This is more resilient
+    # as some HTML tables omit the optional <tbody> tag.
+    return table.find_all("tr")
+
+
+def _row_to_item(base_url: str, tr: BeautifulSoup) -> Optional[CtuilItem]:
+    """Extracts data from a single table row <tr> into a CtuilItem."""
+    tds = tr.find_all("td")
+    # We expect at least 3 cells: Sr.No., Date, Title.
+    if len(tds) < 3:
+        # This will safely skip the header row which uses <th> tags.
+        return None
+
+    date_text = _clean_text(tds[1].text)
+    title_cell = tds[2]
+    title_text = _clean_text(title_cell.text)
+
+    a_tag = title_cell.find("a", href=True)
+    if not a_tag:
+        return None
+
+    href = urljoin(base_url, a_tag["href"])
+    dt = _parse_date_ddmmyyyy(date_text)
+    if not dt:
+        return None
+
+    return CtuilItem(date=dt, title=title_text, href=href)
+
+
+def _fetch_html(url: str, payload: dict) -> str:
+    """Fetches HTML using a POST request."""
+    with requests.Session() as s:
+        s.headers.update(HEADERS)
+        resp = s.post(url, data=payload, timeout=20)
+        resp.raise_for_status()
+        return resp.text
+
+
+def harvest_ctuil_month(year: int, month: int) -> List[Dict[str, str]]:
+    """Main function to scrape and filter CTUIL updates for a specific month."""
+    payload = {
+        'sort_field': 'LatestNews.news_date',
+        'sort_type': 'DESC',
+        'page': '1',
+        'search_keyword': '',
+        'from_date': '',
+        'to_date': '',
+    }
+
+    try:
+        html = _fetch_html(CTUIL_LATEST_URL, payload)
+        print(f"DEBUG: Fetched HTML from {CTUIL_LATEST_URL} via POST. Size: {len(html)} bytes")
+    except requests.exceptions.RequestException as e:
+        print(f"ERROR: Failed to fetch URL {CTUIL_LATEST_URL}. Error: {e}")
+        return []
+
     soup = BeautifulSoup(html, "html.parser")
-    out: List[UpdateItem] = []
+    rows = list(_iter_latest_news_rows(soup))
+    print(f"DEBUG: Found {len(rows)} total <tr> elements in the table.")
 
-    # The CTUIL "WHAT's NEW" widget is a list with date badges and anchor titles.
-    # We'll try a few common patterns – and fall back to anchors if needed.
+    items: List[CtuilItem] = []
+    for tr in rows:
+        item = _row_to_item(CTUIL_LATEST_URL, tr)
+        if item and item.date.year == year and item.date.month == month:
+            items.append(item)
 
-    # 1) Look for obvious repeated rows
-    rows = []
-
-    # Pattern A: <div class="views-row">...</div>
-    rows.extend(soup.select("div.views-row"))
-
-    # Pattern B: list items inside a widget region
-    if not rows:
-        rows.extend(soup.select("ul li"))
-
-    # Pattern C: generic cards in the main container
-    if not rows:
-        rows.extend(soup.select("div.card, div.row, li"))
-
-    for r in rows:
-        # try to find date day/month like the site badges
-        # common patterns:
-        #  <div class="date"> <span class="day">10</span> <span class="mon">Oct</span> </div>
-        day_el = r.select_one(".day, .date .day, .dateday, .date-day")
-        mon_el = r.select_one(".mon, .date .mon, .datemon, .date-mon, .month, .date-month")
-        title_a = r.select_one("a")
-
-        if not title_a:
-            # sometimes text-only
-            title_el = r.select_one("h3, h4, .title")
-            if title_el:
-                # create a dummy anchor to the news page
-                class Dummy: href = CTUIL_NEWS_URL; text = title_el.get_text(" ", strip=True)
-                title_a = Dummy()  # type: ignore
-
-        if not title_a:
-            continue
-
-        title = title_a.get_text(" ", strip=True)
-        href = _mk_abs(getattr(title_a, "href", None))
-
-        # If day/month elements exist, coerce; else try to parse from adjacent text
-        date_iso = None
-        if day_el and mon_el:
-            date_iso = _coerce_date(day_el.get_text(strip=True), mon_el.get_text(strip=True), year)
-        else:
-            # Try to sniff "dd Mon" around the node text
-            neighbor_txt = _date_cleaner.sub(" ", r.get_text(" ", strip=True))
-            m = re.search(r"(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)", neighbor_txt, re.I)
-            if m:
-                date_iso = _coerce_date(m.group(1), m.group(2), year)
-
-        # Fallback to first day of month if nothing found (still useful for QA)
-        if not date_iso:
-            date_iso = f"{year:04d}-{month:02d}-01"
-
-        # filter to target month
-        if date_iso[:7] != f"{year:04d}-{month:02d}":
-            continue
-
-        out.append(UpdateItem(date=date_iso, title=title, url=href))
-
-    # If we couldn't detect rows with selectors above, last fallback:
-    if not out:
-        for a in soup.select("a[href]"):
-            t = a.get_text(" ", strip=True)
-            if not t:
-                continue
-            out.append(UpdateItem(
-                date=f"{year:04d}-{month:02d}-01",
-                title=t,
-                url=_mk_abs(a.get("href")),
-            ))
-
-        # keep only a manageable first page sized chunk
-        out = out[:20]
-
-    # de-dup by (title, url)
-    seen = set()
-    unique: List[UpdateItem] = []
-    for it in out:
-        key = (it.title, it.url)
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(it)
-    return unique
+    print(f"DEBUG: Filtered to {len(items)} items for {month:02d}/{year}.")
+    items.sort(key=lambda x: x.date, reverse=True)
+    return [it.to_dict() for it in items]
 
 
-def harvest_ctuil_month(year: int, month: int) -> List[Dict]:
-    """
-    Fetch CTUIL latest news page and return a list of dicts:
-      { date:'YYYY-MM-DD', title:'...', url:'...', type:'Update', source:'CTUIL' }
-    """
-    resp = requests.get(CTUIL_NEWS_URL, timeout=30)
-    resp.raise_for_status()
-    items = _extract_items(resp.text, year, month)
-    return [it.__dict__ for it in items]
+CTUIL_SOURCES = {
+    "CTUIL": CTUIL_LATEST_URL,
+}
+
+__all__ = ["harvest_ctuil_month", "CTUIL_SOURCES"]

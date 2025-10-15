@@ -1,38 +1,43 @@
-# publish_month.py
-from __future__ import annotations
+# publish_month.py (Root Directory)
 import sys
-from backend import write_month_snapshot
-from backend import harvest_ctuil_month
+import os
+from datetime import datetime, timedelta, timezone
 
-def main():
-    if len(sys.argv) < 3:
-        print("Usage: python publish_month.py YYYY MM")
-        sys.exit(2)
-    y, m = int(sys.argv[1]), int(sys.argv[2])
+# Add the parent directory of backend to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-    central = []
-    #try:
-        #central += harvest_cerc_month(y, m)
-    #except Exception as e:
-     #   print("CERC err:", e)
-    try:
-        central += harvest_ctuil_month(y, m)
-    except Exception as e:
-        print("CTUIL err:", e)
+from backend.storage import (
+    read_month_snapshot,
+    write_month_snapshot,
+    ist_now,
+    CACHE_DIR
+)
+from backend.adapters import harvest_ctuil_month
 
-    # unique + sort
-    seen = set()
-    out = []
-    for it in central:
-        k = (it.get("date",""), it.get("title",""), it.get("url",""))
-        if k in seen:
-            continue
-        seen.add(k)
-        out.append(it)
-    out.sort(key=lambda x: x.get("date",""), reverse=True)
+def run_scraper_job():
+    # 1. Determine current month
+    now = ist_now()
+    yyyy, mm = now.year, now.month
 
-    write_month_snapshot(y, m, {"central": out, "states": [], "uts": []})
-    print(f"Published snapshot for {y}-{m:02d} with {len(out)} items")
+    # 2. Read existing cache (if any)
+    snap = read_month_snapshot(yyyy, mm) or {}
+
+    # 3. Harvest CTUIL data (the key step)
+    print(f"--- Starting CTUIL harvest for {mm:02d}/{yyyy} ---")
+    ctuil_items = harvest_ctuil_month(yyyy, mm)
+    print(f"--- Completed. Found {len(ctuil_items)} final items. ---")
+
+    # 4. Update the snapshot structure
+    snap.setdefault("central", {})["CTUIL"] = ctuil_items
+
+    # 5. Write the updated snapshot back
+    write_month_snapshot(yyyy, mm, snap)
+    print(f"Successfully updated cache file at: {CACHE_DIR.name}/snapshot_{yyyy:04d}_{mm:02d}.json")
 
 if __name__ == "__main__":
-    main()
+    try:
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        run_scraper_job()
+    except Exception as e:
+        print(f"FATAL ERROR during scheduled job: {e}")
+        sys.exit(1)

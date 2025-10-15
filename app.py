@@ -1,15 +1,19 @@
 # app.py
-# NSEFI dashboard — fixed UI with FLOATING (auto-scroll) update panels that pause on hover and on user scroll
-
 from __future__ import annotations
 import base64
 from pathlib import Path
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 import streamlit as st
 
+# storage + adapters
+from backend.storage import (
+    read_month_snapshot,
+    ist_now,
+)
+
 # ─────────────────────────────────────────────────────────────────────────────
-# Page config
+# Page config & Constants
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="NSEFI policy and regulatory monitoring dashboard",
@@ -21,64 +25,56 @@ TITLE = "NSEFI policy and regulatory monitoring dashboard"
 DATA_DIR = Path("data")
 
 # Canonical lists
-CENTRAL_ALL = [
-    "MoP", "MNRE", "MoF", "CEA", "CTUIL", "CERC", "Grid India"
-]
-
+CENTRAL_ALL = ["MoP", "MNRE", "MoF", "CEA", "CTUIL", "CERC", "Grid India"]
 STATES = [
-    "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa",
-    "Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala",
-    "Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland",
-    "Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
-    "Uttar Pradesh","Uttarakhand","West Bengal"
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
+    "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ]
-
 UTS = [
-    "Andaman and Nicobar Islands","Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu","Delhi",
-    "Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi",
+    "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
 ]
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Utilities
-# ─────────────────────────────────────────────────────────────────────────────
-def ist_now() -> datetime:
-    ist = timezone(timedelta(hours=5, minutes=30))
-    return datetime.now(tz=ist)
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Utilities (Image loading)
+# ─────────────────────────────────────────────────────────────────────────────
+@st.cache_data
 def find_asset(prefix_or_exact: str) -> Path | None:
-    if not DATA_DIR.exists():
-        return None
+    """Finds an asset file in the data directory."""
+    if not DATA_DIR.exists(): return None
     p = DATA_DIR / prefix_or_exact
-    if p.exists():
-        return p
+    if p.exists(): return p
     for ext in ("png", "jpg", "jpeg", "svg", "webp"):
         q = DATA_DIR / f"{prefix_or_exact}.{ext}"
-        if q.exists():
-            return q
+        if q.exists(): return q
     for q in DATA_DIR.iterdir():
-        if q.is_file() and q.stem.lower() == prefix_or_exact.lower():
-            return q
+        if q.is_file() and q.stem.lower() == prefix_or_exact.lower(): return q
     return None
 
+
+@st.cache_data
 def image_to_data_uri(path: Path | None) -> str | None:
-    if not path or not path.exists():
-        return None
+    """Converts an image file to a data URI for embedding in HTML."""
+    if not path or not path.exists(): return None
     ext = path.suffix.lower()
-    if ext == ".svg":
-        return f"data:image/svg+xml;utf8,{path.read_text(encoding='utf-8')}"
-    mime = "image/png" if ext == ".png" else ("image/jpeg" if ext in (".jpg",".jpeg") else "image/webp")
+    if ext == ".svg": return f"data:image/svg+xml;utf8,{path.read_text(encoding='utf-8')}"
+    mime = "image/png" if ext == ".png" else ("image/jpeg" if ext in (".jpg", ".jpeg") else "image/webp")
     b64 = base64.b64encode(path.read_bytes()).decode("utf-8")
     return f"data:{mime};base64,{b64}"
 
-# Try multiple names; fall back to hosted logo
+
+# Corrected Logo Loading Logic
 NSEFI_URI = image_to_data_uri(find_asset("12th_year_anniversary_logo_transparent")) \
             or image_to_data_uri(find_asset("NSEFI")) \
             or image_to_data_uri(find_asset("MNRE")) \
             or "https://nsefi.in/wp-content/uploads/2023/02/NSEFI-Logo-1.png"
 
+
 # ─────────────────────────────────────────────────────────────────────────────
-# CSS (fixed appearance)
+# CSS & JavaScript Injection
 # ─────────────────────────────────────────────────────────────────────────────
 def css() -> str:
     return f"""
@@ -104,12 +100,13 @@ html, body, .stApp {{
   margin: .4rem 0 1.0rem 0;
   font-weight:700; color:#0F4237; font-size: 14px;
 }}
-.topbar .brand img {{ height: 48px; width:auto; }}
+.topbar .brand img {{ height: 64px; width:auto; }}
 
 .pagetitle {{
   font-weight:900; color:#1e2a2a; 
   font-size: clamp(28px, 4.2vw, 48px);
   margin: 0.4rem 0 1.0rem 0;
+  text-align: center;
 }}
 
 /* navbar with hover flyouts */
@@ -132,7 +129,6 @@ html, body, .stApp {{
   min-width: 240px;
 }}
 .navbar ul li:hover > .dropdown {{ visibility:visible; opacity:1; }}
-
 .dropdown .root {{ list-style:none; margin:0; padding:0; }}
 .dropdown .root > li {{ position:relative; }}
 .dropdown .root > li > span {{
@@ -167,16 +163,22 @@ html, body, .stApp {{
 .stSelectbox label {{ display:none !important; }}
 .stSelectbox > div > div {{ border-radius:12px !important; }}
 
-/* floating card (mouse scroll + auto float) */
+/* MODIFIED: This section enables the floating panel effect */
 .fcard {{
   background:#0F4237; color:#fff; border-radius:14px; 
   box-shadow:0 14px 22px rgba(16,40,32,0.18);
   padding:0; overflow:hidden; position:relative;
-  max-height: 400px;  /* floating window height */
+  /* Set a fixed height for all panels */
+  height: 400px; 
 }}
 .fcard-body {{
-  padding:0; max-height:400px; overflow-y:auto; scroll-behavior: smooth;
+  /* This container will hold all the update rows */
+  height: 100%; /* Fill the parent .fcard */
+  overflow-y:auto; /* Allow manual scrolling if content is too long */
+  scroll-behavior: smooth;
 }}
+/* END MODIFICATION */
+
 .urow {{
   display:flex; gap:14px; align-items:flex-start; padding:14px 16px; 
   font-size:14px; line-height:1.4; border-bottom:1px solid rgba(255,255,255,.10);
@@ -191,74 +193,92 @@ html, body, .stApp {{
 .urow a {{ color:#fff; font-weight:700; text-decoration:none; }}
 .urow a:hover {{ text-decoration:underline; }}
 
-.fcard {{ margin-bottom: 18px; }}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 """
 
-# JS: auto-scroll each .fcard-body (float). Pause on hover or user scroll; resume after idle.
-def floating_js() -> str:
+
+# ADDED: This function contains the necessary JavaScript for real-time features.
+def javascript_injector() -> str:
+    """Returns all necessary JavaScript with a robust initializer."""
     return """
 <script>
-(function(){
-  function init(){
-    const speedPxPerSec = 26;           // float speed
-    const resumeDelayMs = 6000;          // resume after idle
-    const raf = window.requestAnimationFrame || (fn=>setTimeout(fn,16));
+    // --- SCRIPT DEFINITIONS ---
 
-    document.querySelectorAll(".fcard-body").forEach((el) => {
-      let pausedHover = false;
-      let pausedUser  = false;
-      let lastUserTs  = 0;
-
-      function pauseUser(){ pausedUser = true; lastUserTs = Date.now(); }
-      function maybeResume(){
-        if (pausedUser && (Date.now() - lastUserTs) > resumeDelayMs){
-          pausedUser = false;
+    // 1. Real-Time Clock Script
+    function updateClock() {
+        const clockElement = document.getElementById("realtime-clock");
+        if (clockElement) {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const formatter = new Intl.DateTimeFormat('en-GB', options);
+            const parts = formatter.formatToParts(now);
+            const day = parts.find(p => p.type === 'day').value;
+            const month = parts.find(p => p.type === 'month').value.toLowerCase();
+            const year = parts.find(p => p.type === 'year').value;
+            const time = parts.filter(p => ['hour', 'minute', 'second'].includes(p.type)).map(p => p.value).join(':');
+            clockElement.innerHTML = `${day} - ${month} - ${year} &nbsp;|&nbsp; ${time} IST`;
         }
-      }
-      // Pause conditions
-      el.addEventListener("mouseenter", ()=> pausedHover = true);
-      el.addEventListener("mouseleave", ()=> pausedHover = false);
-      ["wheel","touchstart","touchmove","scroll","keydown"].forEach(evt=>{
-        el.addEventListener(evt, pauseUser, {passive:true});
-      });
+    }
 
-      // Auto float loop
-      (function tick(){
-        maybeResume();
-        if (!pausedHover && !pausedUser){
-          const step = speedPxPerSec / 60.0; // per frame (approx)
-          el.scrollTop += step;
-          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
-            el.scrollTop = 0; // loop
-          }
+    // 2. Floating Panel Script
+    function initFloatingPanels(){
+        const speedPxPerSec = 26;
+        const resumeDelayMs = 6000;
+        const raf = window.requestAnimationFrame || (fn => setTimeout(fn, 16));
+
+        document.querySelectorAll(".fcard-body").forEach(el => {
+            let pausedHover = false, pausedUser = false, lastUserTs = 0;
+            const pauseUser = () => { pausedUser = true; lastUserTs = Date.now(); };
+            const maybeResume = () => { if (pausedUser && (Date.now() - lastUserTs) > resumeDelayMs) pausedUser = false; };
+            el.addEventListener("mouseenter", () => pausedHover = true);
+            el.addEventListener("mouseleave", () => pausedHover = false);
+            ["wheel", "touchstart", "touchmove", "scroll", "keydown"].forEach(evt => el.addEventListener(evt, pauseUser, { passive: true }));
+
+            (function tick() {
+                maybeResume();
+                if (!pausedHover && !pausedUser) {
+                    el.scrollTop += speedPxPerSec / 60.0;
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) {
+                        el.scrollTop = 0;
+                    }
+                }
+                raf(tick);
+            })();
+        });
+    }
+
+    // --- ROBUST INITIALIZER (THE FIX) ---
+    const initializer = setInterval(function() {
+        const clockElement = document.getElementById("realtime-clock");
+        const panelElements = document.querySelectorAll(".fcard-body");
+
+        if (clockElement && panelElements.length > 0) {
+            updateClock();
+            setInterval(updateClock, 1000);
+            initFloatingPanels();
+            clearInterval(initializer);
         }
-        raf(tick);
-      })();
-    });
-  }
-  // Run when DOM is ready; Streamlit reruns, so slight delay is safer
-  const start = () => setTimeout(init, 50);
-  if (document.readyState === "complete") start();
-  else window.addEventListener("load", start);
-})();
+    }, 100);
 </script>
 """
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Navbar with flyouts
 # ─────────────────────────────────────────────────────────────────────────────
 def _links_list(page: str, level: str, names: list[str]) -> str:
+    from urllib.parse import quote
     return "".join(
-        f'<li><a target="_self" href="?page={page}&level={level}&entity={name.replace(" ", "%20")}">{name}</a></li>'
+        f'<li><a target="_self" href="?page={page}&level={level}&entity={quote(name)}">{name}</a></li>'
         for name in names
     )
 
+
 def dropdown_html(page: str) -> str:
     central_links = _links_list(page, "central", CENTRAL_ALL)
-    states_links  = _links_list(page, "state", STATES)
-    uts_links     = _links_list(page, "state", UTS)
+    states_links = _links_list(page, "state", STATES)
+    uts_links = _links_list(page, "state", UTS)
     return f"""
 <div class="dropdown">
   <ul class="root">
@@ -278,6 +298,7 @@ def dropdown_html(page: str) -> str:
 </div>
 """
 
+
 def navbar_html() -> str:
     return f"""
 <nav class="navbar">
@@ -290,25 +311,24 @@ def navbar_html() -> str:
 </nav>
 """
 
+
 # ─────────────────────────────────────────────────────────────────────────────
 # UI helpers
 # ─────────────────────────────────────────────────────────────────────────────
 def render_header():
-    now = ist_now()
-    date_str = f"{now.strftime('%d')} - {now.strftime('%B').lower()} - {now.strftime('%Y')}"
-    time_str = f"{now.strftime('%H:%M:%S')} IST"
-
+    # MODIFIED: Changed the static timestamp to a placeholder div with an ID.
     st.markdown(
         f"""
         <div class="topbar">
-          <div class="ts">{date_str} &nbsp;|&nbsp; {time_str}</div>
-          <div class="brand">{f'<img alt="NSEFI logo" src="{NSEFI_URI}"/>' if NSEFI_URI else 'NSEFI'}</div>
+          <div class="ts" id="realtime-clock">Loading...</div>
+          <div class="brand"><img alt="NSEFI logo" src="{NSEFI_URI}"/></div>
         </div>
         <h1 class="pagetitle">{TITLE}</h1>
         {navbar_html()}
         """,
         unsafe_allow_html=True,
     )
+
 
 def _badge(iso_date: str) -> str:
     try:
@@ -318,45 +338,26 @@ def _badge(iso_date: str) -> str:
     except Exception:
         return "<div class='badge'><div class='day'>—</div><div class='mon'></div></div>"
 
-def _row_html(date_iso: str, title: str, url: str, tag: str = "Update") -> str:
+
+def _row_html(date_iso: str, title: str, url: str) -> str:
+    # This function is simplified to match your desired output
     return f"""
     <div class="urow">
       {_badge(date_iso)}
       <div class="row-main">
         <div class="row-title"><a href="{url}" target="_blank" rel="noopener">{title}</a></div>
-        <div class="row-meta"><span class="pill">{tag}</span></div>
       </div>
     </div>
     """
 
-def _dummy_updates() -> tuple[list[dict], list[dict], list[dict]]:
-    # Placeholder sample items (keeps UI shape stable)
-    return (
-        [
-            {"date":"2025-10-12","title":"CERC: example regulation update 1","url":"#","type":"Regulatory"},
-            {"date":"2025-10-09","title":"MNRE: example policy circular","url":"#","type":"Update"},
-            {"date":"2025-10-08","title":"CTUIL: What’s New — sample note","url":"#","type":"Update"},
-            {"date":"2025-10-05","title":"MoP: example memo","url":"#","type":"Update"},
-            {"date":"2025-10-02","title":"CEA: example guideline","url":"#","type":"Update"},
-        ],
-        [
-            {"date":"2025-10-11","title":"Chhattisgarh: example update","url":"#","type":"Regulatory"},
-            {"date":"2025-10-09","title":"Goa: example policy bulletin","url":"#","type":"Update"},
-            {"date":"2025-10-06","title":"Rajasthan: example notice","url":"#","type":"Update"},
-        ],
-        [
-            {"date":"2025-10-11","title":"Chandigarh: example order","url":"#","type":"Regulatory"},
-            {"date":"2025-10-07","title":"Delhi: example circular","url":"#","type":"Update"},
-            {"date":"2025-10-03","title":"J&K: sample update","url":"#","type":"Update"},
-        ],
-    )
 
 def _panel_html(items: list[dict], body_id: str) -> str:
-    """Floating card with mouse scroll + auto-scroll script (no arrows)."""
     if not items:
         body = "<div class='urow'><div>No updates found.</div></div>"
     else:
-        body = "".join(_row_html(it.get("date",""), it.get("title",""), it.get("url","#"), it.get("type","Update")) for it in items)
+        body = "".join(
+            _row_html(it.get("date", ""), it.get("title", ""), it.get("url", "#")) for it in
+            items)
     return f"""
     <div class='fcard'>
       <div id="{body_id}" class='fcard-body'>
@@ -365,34 +366,48 @@ def _panel_html(items: list[dict], body_id: str) -> str:
     </div>
     """
 
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Main page
 # ─────────────────────────────────────────────────────────────────────────────
 def page_home():
-    central_items, state_items, ut_items = _dummy_updates()
-
     now = ist_now()
-    st.markdown(f"<div class='section-title'>Latest updates — {now.strftime('%B')} {now.year}</div>", unsafe_allow_html=True)
+    yyyy, mm = now.year, now.month
+
+    snap = read_month_snapshot(yyyy, mm) or {}
+
+    # In a full implementation, you would combine data from all central sources.
+    all_central_items = []
+    for source in CENTRAL_ALL:
+        all_central_items.extend(snap.get("central", {}).get(source, []))
+
+    st.markdown(f"<div class='section-title'>Latest updates — {now.strftime('%B')} {now.year}</div>",
+                unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1, 1])
 
     with c1:
         st.markdown("<div class='col-heading'>Central</div>", unsafe_allow_html=True)
-        st.selectbox("Central filter", ["All"] + CENTRAL_ALL, index=0, key="central_filter", label_visibility="collapsed")
-        st.markdown(_panel_html(central_items, "body-central"), unsafe_allow_html=True)
+        selected_central = st.selectbox("Central filter", ["All"] + CENTRAL_ALL, index=0, key="central_filter",
+                                        label_visibility="collapsed")
+
+        if selected_central == "All":
+            display_central_items = all_central_items
+        else:
+            display_central_items = snap.get("central", {}).get(selected_central, [])
+
+        st.markdown(_panel_html(display_central_items, "body-central"), unsafe_allow_html=True)
 
     with c2:
         st.markdown("<div class='col-heading'>States</div>", unsafe_allow_html=True)
         st.selectbox("State filter", ["All"] + STATES, index=0, key="state_filter", label_visibility="collapsed")
-        st.markdown(_panel_html(state_items, "body-states"), unsafe_allow_html=True)
+        st.markdown(_panel_html([], "body-states"), unsafe_allow_html=True)
 
     with c3:
         st.markdown("<div class='col-heading'>UTs</div>", unsafe_allow_html=True)
         st.selectbox("UT filter", ["All"] + UTS, index=0, key="ut_filter", label_visibility="collapsed")
-        st.markdown(_panel_html(ut_items, "body-uts"), unsafe_allow_html=True)
+        st.markdown(_panel_html([], "body-uts"), unsafe_allow_html=True)
 
-    # Inject floating JS once panels exist
-    st.markdown(floating_js(), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Entry
@@ -400,7 +415,6 @@ def page_home():
 def main():
     st.markdown(css(), unsafe_allow_html=True)
     render_header()
-
     page = st.query_params.get("page", "home")
     if isinstance(page, list):
         page = page[0]
@@ -418,6 +432,10 @@ def main():
         st.info("Use the hover menu to pick Central / States / UTs / Entity.")
     else:
         page_home()
+
+    # ADDED: This single line injects the JavaScript that makes the clock and panels work.
+    st.markdown(javascript_injector(), unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
     main()
